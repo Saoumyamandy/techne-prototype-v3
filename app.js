@@ -93,7 +93,7 @@ const App = (() => {
   // ── state, kept in the hash so a reload or shared link lands on the same view ──
   const SCREENS = {
     grad: [['ide', 'IDE'], ['save', 'Describe-task save'], ['archive', 'Your twin (archive)'], ['learn', 'Learning path'], ['onboard', 'Onboarding + permissions'], ['report', 'Year-end report']],
-    senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['persona', 'How Techne’s questions are built'], ['report', 'Year-end report']],
+    senior: [['home', 'Your Home'], ['twin', 'Your twin'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['persona', 'How Techne’s questions are built'], ['report', 'Year-end report']],
     mobile: [['approvals', 'Senior · your twin’s drafts'], ['probes', 'Senior · Techne’s questions'], ['slack', 'New grad · Slack'], ['archive', 'New grad · your twin']],
   };
   const state = { role: 'grad', screen: 'ide', wt: 'split', help: 'terminal', sc: 'checked', seen: '0', theme: 'light' };
@@ -111,6 +111,7 @@ const App = (() => {
     filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' },
     seen: { role: 'grad', screen: 'ide', sc: 'checked', seen: '1' },
     persona: { role: 'senior', screen: 'persona' },
+    'senior-twin': { role: 'senior', screen: 'twin' },
     inline: { role: 'grad', screen: 'ide', sc: 'checked', wt: 'inline' }, mobile: { role: 'mobile', screen: 'approvals' },
   };
   function hostTheme() {

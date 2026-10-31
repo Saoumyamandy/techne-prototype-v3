@@ -524,6 +524,39 @@ const DATA = (() => {
     },
   };
 
+  // ── Priya's twin page: what it knows, where each piece came from, who asked it ──
+  const twinPage = {
+    stats: [['128', 'docs in your twin'], ['63', 'answers this month'], ['41', 'new grads helped'], ['92%', 'said it helped']],
+    topics: [
+      { name: 'Local COBOL builds', docs: 24, inferred: 0, used: 21 },
+      { name: 'Vendor sync and restarts', docs: 18, inferred: 0, used: 17 },
+      { name: 'Nightly vendor file copy', docs: 11, inferred: 1, used: 9 },
+      { name: 'VSAM and reporting exports', docs: 9, inferred: 0, used: 11 },
+      { name: 'PO batch scheduling', docs: 6, inferred: 0, used: 5 },
+    ],
+    docs: [
+      { id: 't7', title: 'PDF invoices need their own folder', topic: 'Nightly vendor file copy', from: 'Inferred by your twin', used: 1, helped: '—', checked: 'Not yet', inferred: true,
+        trail: [['Mar 12', 'video', 'A reporting job read every file in invoices/', 'Your recorded session'], ['Oct 31', 'alert', 'Your twin inferred PDFs need their own folder', 'Not confirmed by you yet'], ['', 'users', 'Maya used it once, in PROC-512', '']] },
+      { id: 't1', title: 'Restart VENDSYNC from the failed step', topic: 'Vendor sync and restarts', from: 'Your session + your answer', used: 3, helped: '3 of 3', checked: 'Oct 31', trail: restartTrail },
+      { id: 't3', title: 'Copybook not found when building locally', topic: 'Local COBOL builds', from: 'Your answer to a new grad', used: 12, helped: '11 of 12', checked: '3 days ago',
+        trail: [['Aug 14', 'message', 'Sam asked why the compiler couldn’t find VENDREC', 'Routed to your twin'], ['Aug 14', 'check', 'You checked the drafted answer', ''], ['', 'users', 'Used 12 times since · 11 said it helped', '']] },
+      { id: 't4', title: 'Reading VENDMAST for reports', topic: 'VSAM and reporting exports', from: 'Your answer to a new grad', used: 22, helped: '19 of 22', checked: '5 days ago',
+        trail: [['Jun 2', 'message', 'Jordan asked how to read the VSAM file in Python', 'Routed to your twin'], ['Jun 2', 'check', 'You checked the drafted answer', ''], ['', 'users', 'Used 22 times since · 19 said it helped', '']] },
+      { id: 't6', title: 'Reading a COBOL compile listing', topic: 'Local COBOL builds', from: 'Maya’s note, checked by you', used: 27, helped: '24 of 27', checked: '1 week ago',
+        trail: [['Oct 20', 'user', 'Maya published a note from her twin', 'Shared for credits'], ['Oct 21', 'check', 'You checked it and added two steps', ''], ['', 'users', 'Used 27 times since · 24 said it helped', '']] },
+      { id: 't2', title: 'Rerunning the nightly vendor sync after a partial failure', topic: 'Vendor sync and restarts', from: 'Your session', used: 31, helped: '28 of 31', checked: '2 weeks ago',
+        trail: [['Mar 4', 'video', 'You restarted VENDSYNC after a -911', 'Your recorded session'], ['Mar 5', 'check', 'You reviewed and approved', ''], ['', 'users', 'Used 31 times since · 28 said it helped', '']] },
+      { id: 't5', title: 'The nightly vendor file copy, step by step', topic: 'Nightly vendor file copy', from: 'Your interview with Techne', used: 16, helped: '15 of 16', checked: '2 weeks ago',
+        trail: [['Oct 14', 'twin', 'Techne asked you why the master file copies first', 'Asked as a new grad'], ['Oct 15', 'check', 'You reviewed and approved', ''], ['', 'users', 'Used 16 times since · 15 said it helped', '']] },
+    ],
+    asked: [
+      ['VENDSYNC failed at step 3 (SQLCODE -911)', 'Maya Chen', '2h ago', 'answered', 'helped'],
+      ['Copybook not found when building PROCVEND', 'Sam Okafor', 'yesterday', 'answered', 'helped'],
+      ['How do I read VENDMAST for a report?', 'Jordan Lee', 'yesterday', 'answered', ''],
+      ['Can PROCINV run twice in one night?', 'Ana Park', '2 days ago', 'gap', ''],
+    ],
+  };
+
   // ── Senior IDE and interview ──
   const seniorIde = {
     file: 'VENDSYNC.jcl',
@@ -655,5 +688,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, sentDraft, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, personaPage, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, sentDraft, interviewDraft, queue, docs, twinKnows, twinPage, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, personaPage, archive, graph, learning, report };
 })();

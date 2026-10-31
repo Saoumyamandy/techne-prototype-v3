@@ -35,6 +35,7 @@ Use the dark bar at the top to switch between **New grad**, **Senior** and **Mob
   - *Your twin's drafts* come first. They're only yours, never locked, with To do and Done tabs. Every item opens for review, and approving can be undone.
   - *What your twin knows* shows topics, gaps and Test your twin.
   - *Your impact* is collapsed by default.
+- **Your twin** (`#senior-twin`): everything Senior Techne answers from Priya's work. It shows the topics it knows (verified or inferred), every doc with its trail back to where it came from and how often it helped, what new grads asked it this week, and its gaps. Priya can pause learning, confirm an inferred doc, keep a doc private or retire it, and test her twin.
 - **Question Queue:** shared by every senior. You claim an item before answering it, and claimed items are locked for everyone else.
 - **Company repository:** every approved doc and its history.
 - **Your IDE:** a recording indicator and Pause, a session timeline with the key moments Techne flagged (star a terminal line to see why), Techne's question card with "Why Techne is asking", and the end-of-day interview. Answering drafts a doc into Your twin's drafts.
@@ -44,7 +45,7 @@ Use the dark bar at the top to switch between **New grad**, **Senior** and **Mob
 
 **Mobile** (phone frame): senior drafts on the go, Techne's questions with quick replies and voice, a new grad asking Senior Techne in Slack, and the new grad's twin.
 
-Short links: `#senior-ide`, `#senior`, `#restart`, `#seen`, `#filecopy`, `#persona`, `#onboarding`, `#archive`, `#queue`, `#hotspots`, `#mobile`.
+Short links: `#senior-ide`, `#senior`, `#senior-twin`, `#restart`, `#seen`, `#filecopy`, `#persona`, `#onboarding`, `#archive`, `#queue`, `#hotspots`, `#mobile`.
 
 Answer fields on Techne's questions type out a prepared answer whatever keys you press. Replay resets every screen.
 

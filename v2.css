@@ -740,3 +740,47 @@
 .ide[data-wt="inline"][data-focus="tree"] .ln{opacity:.55;filter:blur(1.2px)}
 .ide[data-wt="inline"][data-focus="term"] .tl:not(.target){opacity:.4;filter:blur(1px)}
 .ide[data-wt="inline"] .ln,.ide[data-wt="inline"] .tl,.ide[data-wt="inline"] .tree li{transition:opacity .35s,filter .35s}
+
+/* senior: Your twin */
+.twinp{display:flex;flex-direction:column;gap:18px}
+.twin-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.twin-ctl{display:flex;align-items:center;gap:8px}
+.twin-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.twin-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.twin-side{display:flex;flex-direction:column;gap:16px}
+.tk-list{list-style:none;display:flex;flex-direction:column;margin-top:10px}
+.tk-list button{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(0,1.6fr) 70px 120px;align-items:center;gap:14px;width:100%;padding:10px 8px;border-radius:8px;text-align:left;border-top:1px solid var(--line-2)}
+.tk-list li:first-child button{border-top:0}
+.tk-list button:hover{background:var(--hover)}
+.tk-list button.on{background:var(--guide-soft)}
+.tk-name{font-size:13px;font-weight:500}
+.tk-n{font-size:12px;color:var(--muted)}
+.tk-n b{color:var(--ink);font-weight:600;font-size:13px;margin-right:2px}
+.tk-u{font-size:12px;color:var(--muted);text-align:right}
+.tdocs{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tdoc{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.tdoc.open{border-color:var(--faint)}
+.tdoc-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;text-align:left}
+.tdoc-row > .ic{width:15px;height:15px;color:var(--muted);flex:none}
+.tdoc-row:hover{background:var(--hover)}
+.tdoc-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tdoc-main b{font-size:13px;font-weight:500}
+.tdoc-main span{font-size:12px;color:var(--muted)}
+.tdoc-use{font-size:12px;color:var(--muted);white-space:nowrap}
+.tdoc-use b{color:var(--ink);font-weight:600}
+.tdoc-st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-2);background:var(--chip);border-radius:999px;padding:0 9px;line-height:22px;white-space:nowrap}
+.tdoc-st .ic{width:12px;height:12px}
+.tdoc.is-retired .tdoc-main b{color:var(--muted);text-decoration:line-through}
+.tdoc-body{padding:4px 14px 14px 54px;border-top:1px solid var(--line-2)}
+.tdoc-body .slabel{margin-top:10px}
+.tdoc-acts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.asked-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.asked-list li{display:flex;gap:10px}
+.asked-list .kicon{width:26px;height:26px}
+.asked-list li > div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.asked-list b{font-size:12.5px;font-weight:500;line-height:1.4}
+.asked-list li > div > span:not(.stag){font-size:11.5px;color:var(--muted)}
+.asked-list .stag.mini{margin:2px 0 0;align-self:flex-start;white-space:normal;height:auto;line-height:1.4;padding:2px 6px}
+.twin-side .gaps{margin:10px 0 8px}
+.twin-side .testbox{margin-top:10px}
+@media (max-width:1180px){.twin-grid{grid-template-columns:1fr}.tk-list button{grid-template-columns:1fr auto}.tk-list .segs,.tk-u{display:none}}

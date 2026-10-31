@@ -168,6 +168,83 @@ const SeniorPages = (() => {
     </div>`;
   }
 
+  // ── Your twin (senior): what it knows, where each piece came from, who asked, and the controls ──
+  let twinTopic = null, twinOpen = 't1', twinTest = false;
+  const docState = {}, confirmed = {};
+  const trailHTML = t => `<ol class="trail">${t.map(([when, ic, what, sub]) =>
+    `<li><span class="tr-dot">${icon(ic)}</span><div>${when ? `<span class="tr-when">${when}</span>` : ''}<b>${what}</b>${sub ? `<span class="tr-sub">${sub}</span>` : ''}</div></li>`).join('')}</ol>`;
+  function twinHTML() {
+    const T = DATA.twinPage, K = DATA.twinKnows;
+    // confirming an inferred doc is kept in page state, so Replay puts it back
+    const docs = T.docs.map(d => confirmed[d.id] ? { ...d, inferred: false, checked: 'just now', from: 'Inferred, confirmed by you' } : d)
+      .filter(d => !twinTopic || d.topic === twinTopic);  // data order: waiting for you first, then newest
+    const STATE = { private: ['lock', 'Private · not answered from'], retired: ['x', 'Retired · no longer answered from'] };
+    return `<div class="page twinp">
+      <div class="hello">
+        <div class="twin-top">
+          <div><h1>Your twin</h1><p>Everything Senior Techne answers from your work. You decide what it knows.</p></div>
+          <div class="twin-ctl">
+            <span class="recpill ${recording ? 'on' : 'off'}">${icon('record')}${recording ? 'Learning from your work' : 'Paused'}</span>
+            <button class="btn ghost sm" data-sact="twin-pause">${icon(recording ? 'pause' : 'play')}${recording ? 'Pause learning' : 'Resume'}</button>
+          </div>
+        </div>
+        <div class="stats">${T.stats.map(([n, l]) => `<div><span>${l}</span><b>${n}</b></div>`).join('')}</div>
+      </div>
+      <div class="twin-grid">
+        <div class="twin-main">
+          <div class="card">
+            <div class="chead"><span class="ctitle">What it knows</span><span class="csub inline">${twinTopic ? `<button class="link sm" data-sact="twin-topic" data-t="">${icon('x')}Show all topics</button>` : 'Click a topic to see its docs'}</span></div>
+            <ul class="tk-list">${T.topics.map(t => `<li><button class="${twinTopic === t.name ? 'on' : ''}" data-sact="twin-topic" data-t="${t.name}">
+              <span class="tk-name">${t.name}</span>
+              <span class="segs">${Array.from({ length: t.docs }, (_, i) => `<i class="${i < t.docs - t.inferred ? 'ok' : 'warn'}"></i>`).join('')}</span>
+              <span class="tk-n"><b>${t.docs}</b> docs</span>
+              <span class="tk-u">${t.used} uses this month</span></button></li>`).join('')}</ul>
+            <div class="cover-legend"><span><i style="background:var(--green)"></i>Verified by you</span><span><i style="background:#F0A23B"></i>Inferred, waiting for you</span></div>
+          </div>
+          <div class="card">
+            <div class="chead"><span class="ctitle">Docs in your twin${twinTopic ? ` · ${twinTopic}` : ''}</span><span class="csub inline">Waiting for you first, then newest · ${docs.length} of ${twinTopic ? T.topics.find(t => t.name === twinTopic).docs : 128}</span></div>
+            <div class="tdocs">${docs.map(d => {
+              const st = docState[d.id];
+              return `<div class="tdoc ${twinOpen === d.id ? 'open' : ''} ${st ? 'is-' + st : ''}">
+                <button class="tdoc-row" data-sact="twin-doc" data-id="${d.id}">
+                  <span class="kicon ${d.inferred ? 'k-workaround' : 'k-session'}">${icon(d.inferred ? 'alert' : 'twin')}</span>
+                  <span class="tdoc-main"><b>${d.title}</b><span>${d.topic} · ${d.from} · checked ${d.checked}</span></span>
+                  ${st ? `<span class="tdoc-st">${icon(STATE[st][0])}${STATE[st][1]}</span>` : d.inferred ? `<span class="stag st-warn mini">${icon('alert')}Inferred · check it</span>` : `<span class="tdoc-use"><b>${d.used}</b> uses · ${d.helped} helped</span>`}
+                  ${icon(twinOpen === d.id ? 'chev-up' : 'chev-down')}
+                </button>
+                ${twinOpen === d.id ? `<div class="tdoc-body">
+                  <div class="slabel">Where it came from</div>${trailHTML(d.trail)}
+                  <div class="tdoc-acts">
+                    ${d.inferred ? `<button class="btn primary sm" data-sact="twin-confirm" data-id="${d.id}">${icon('check')}Confirm it</button>` : `<button class="btn ghost sm" data-sact="twin-edit">${icon('edit')}Edit</button>`}
+                    <button class="btn ghost sm" data-sact="twin-private" data-id="${d.id}">${icon('lock')}${st === 'private' ? 'Make it answerable again' : 'Keep private'}</button>
+                    <button class="btn ghost sm" data-sact="twin-retire" data-id="${d.id}">${icon('x')}${st === 'retired' ? 'Bring it back' : 'Retire'}</button>
+                  </div>
+                </div>` : ''}
+              </div>`;
+            }).join('')}</div>
+          </div>
+        </div>
+        <aside class="twin-side">
+          <div class="card">
+            <div class="ctitle">Asked this week</div><div class="csub">New grads’ questions Senior Techne answered from your twin</div>
+            <ul class="asked-list">${T.asked.map(([q, who, ago, st, helped]) => `<li>
+              <span class="kicon ${st === 'gap' ? 'k-uncovered' : 'k-answer'}">${icon(st === 'gap' ? 'alert' : 'message')}</span>
+              <div><b>${q}</b><span>${who} · ${ago}</span>
+              ${st === 'gap' ? `<span class="stag st-bad mini">${icon('alert')}Your twin didn’t know · in the Question Queue</span>` : `<span class="stag st-ok mini">${icon('check')}Answered${helped ? ' · it helped' : ''}</span>`}</div></li>`).join('')}</ul>
+          </div>
+          <div class="card">
+            <div class="ctitle">Gaps</div><div class="csub">What new grads ask that your twin can’t answer yet</div>
+            <ul class="gaps">${K.gaps.map(([g, n]) => `<li>${icon('alert')}<span>${g}</span><span class="mut">${n}</span></li>`).join('')}</ul>
+            <p class="csub">Techne will ask you about the first one on Friday, as a new grad.</p>
+            ${twinTest ? `<div class="testbox"><div class="tq">${icon('user')}${K.test.q}</div><div class="ta">${App.stepTag({ twin: 'priya', status: 'verified' })}<p>${K.test.a}</p><small>${K.test.src}</small></div>
+              <div class="tq">${icon('user')}${K.test.gapQ}</div><div class="ta gap">${App.stepTag({ twin: null, status: 'unknown' })}<p>${K.test.gapA}</p></div></div>`
+              : `<button class="btn ghost" data-sact="twin-test">${icon('twin')}Test your twin</button>`}
+          </div>
+        </aside>
+      </div>
+    </div>`;
+  }
+
   // ── How Techne's questions are built ──
   let focusCluster = null;
   function personaHTML() {
@@ -207,6 +284,7 @@ const SeniorPages = (() => {
 
   function render(scr, el) {
     host = el;
+    if (scr === 'twin') { el.innerHTML = twinHTML(); return; }
     if (scr === 'persona') {
       el.innerHTML = personaHTML();
       if (focusCluster) { const t = el.querySelector(`#cl-${focusCluster}`); t?.scrollIntoView({ block: 'center' }); focusCluster = null; }
@@ -234,6 +312,31 @@ const SeniorPages = (() => {
   function onAct(act, el) {
     switch (act) {
       case 'moment': showMoment(+el.dataset.i, el); break;
+      case 'twin-topic': twinTopic = el.dataset.t || null; twinOpen = null; rerender('twin'); break;
+      case 'twin-doc': twinOpen = twinOpen === el.dataset.id ? null : el.dataset.id; rerender('twin'); break;
+      case 'twin-test': twinTest = true; rerender('twin'); break;
+      case 'twin-pause':
+        recording = !recording;
+        App.toast(recording ? `${icon('record')}Your twin is learning again.` : `${icon('pause')}Paused. Your twin won’t learn from anything until you resume.`);
+        rerender('twin'); break;
+      case 'twin-edit': App.toast(`${icon('edit')}Opens the doc in the company repository for editing.`); break;
+      case 'twin-confirm': {
+        confirmed[el.dataset.id] = true;
+        App.toast(`${icon('check')}Confirmed. Maya’s walkthrough now shows it as verified.`); rerender('twin'); break;
+      }
+      case 'twin-private': {
+        const id = el.dataset.id;
+        docState[id] = docState[id] === 'private' ? undefined : 'private';
+        App.toast(docState[id] ? `${icon('lock')}Kept private. Senior Techne won’t answer from it.` : `${icon('check')}Senior Techne can answer from it again.`);
+        rerender('twin'); break;
+      }
+      case 'twin-retire': {
+        const id = el.dataset.id, was = docState[id];
+        docState[id] = was === 'retired' ? undefined : 'retired';
+        rerender('twin');
+        if (docState[id]) App.undoToast(`${icon('x')}Retired. Senior Techne won’t answer from it.`, () => { docState[id] = was; rerender('twin'); });
+        break;
+      }
       case 'cluster': focusCluster = el.dataset.cl || null; App.set({ role: 'senior', screen: 'persona' }); break;
       case 'moment-close': host.querySelector('.mpop')?.remove(); host.querySelectorAll('[data-sact="moment"].active').forEach(b => b.classList.remove('active')); break;
       case 'moments-list': momentsOpen = !momentsOpen; rerender('ide'); break;
@@ -309,6 +412,6 @@ const SeniorPages = (() => {
   });
 
   function stop() { timers.forEach(clearTimeout); timers = []; }
-  function reset() { focusCluster = null; stop(); clearTimeout(typing); typing = null; recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
+  function reset() { focusCluster = null; twinTopic = null; twinOpen = 't1'; twinTest = false; for (const k in docState) delete docState[k]; for (const k in confirmed) delete confirmed[k]; stop(); clearTimeout(typing); typing = null; recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
   return { render, stop, reset };
 })();
