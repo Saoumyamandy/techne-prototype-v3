@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Techne v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="v2.css">
+</head>
+<body>
+
+<!-- prototype controls, not part of Techne itself; H hides it -->
+<header class="pbar" id="pbar"></header>
+
+<main class="app">
+
+  <!-- ───────────── NEW GRAD: Techne IDE ───────────── -->
+  <section class="screen grad" id="grad" hidden>
+    <div class="ide" id="ide">
+      <aside class="side" id="side">
+        <div class="brand">Techne <em>IDE</em></div>
+
+        <ul class="nav gnav" id="gnav">
+          <li data-screen="ide"><i data-icon="code"></i><span>Code</span></li>
+          <li data-screen="archive"><i data-icon="twin"></i><span>Your twin</span><b id="arch-count">24</b></li>
+          <li data-screen="learn"><i data-icon="route"></i><span>Learning path</span></li>
+          <li data-screen="report"><i data-icon="report"></i><span>Your year</span></li>
+          <li data-screen="onboard"><i data-icon="shield"></i><span>What Techne records</span></li>
+        </ul>
+
+        <div class="label">Explorer</div>
+        <ul class="tree" id="tree"></ul>
+
+        <div class="onb">
+          <div class="onb-row"><span>Onboarding</span><span class="mut">Week 2 of 6</span></div>
+          <div class="ticks" data-ticks="36" data-filled="12" aria-label="Onboarding progress: week 2 of 6"></div>
+        </div>
+
+        <div class="me">
+          <span class="avatar">M</span>
+          <div><b>Maya Chen</b><span>New grad · Procurement</span></div>
+        </div>
+      </aside>
+
+      <div class="main">
+        <header class="tabbar">
+          <div class="ftabs" id="ftabs"></div>
+          <div class="bar-right">
+            <button class="ask-st" id="nav-ask"><i data-icon="sparkle"></i>Ask Senior Techne</button>
+            <button class="st-toggle on" id="st-toggle" role="switch" aria-checked="true" data-tip="On: Senior Techne watches your work and offers help. Off: it waits until you ask.">
+              <span class="sw"><i></i></span>Senior Techne
+            </button>
+            <span class="avatar">M</span>
+          </div>
+        </header>
+
+        <div class="body" id="body">
+          <div class="work" id="work">
+            <div class="editor" id="editor"></div>
+            <div class="term" id="term">
+              <div class="term-tabs">
+                <span class="on"><i data-icon="terminal"></i>Terminal</span>
+                <span>Problems <b class="count" id="problems" hidden>1</b></span>
+                <span>Output</span>
+                <span class="term-right" id="term-right">zsh · procurement-core</span>
+                <button class="need-help" id="help-term"><i data-icon="buoy"></i>Need help</button>
+              </div>
+              <div class="term-body" id="term-body"></div>
+            </div>
+            <button class="help-corner glass" id="help-corner" aria-label="Get help">
+              <i data-icon="buoy"></i><span class="lbl">Need help?</span>
+            </button>
+          </div>
+          <div class="divider" id="divider" hidden><i></i></div>
+          <aside class="sp" id="sp" hidden></aside>
+        </div>
+
+        <!-- the other new grad screens render here, keeping the sidebar -->
+        <div class="gpage" id="gpage" hidden></div>
+      </div>
+    </div>
+
+    <div class="guide-layer" id="guide-layer">
+      <svg class="connector" id="connector"></svg>
+    </div>
+    <div class="modal-wrap" id="grad-modal" hidden></div>
+  </section>
+
+  <!-- ───────────── SENIOR ───────────── -->
+  <section class="screen senior" id="senior" hidden>
+    <header class="dash-bar">
+      <div class="brand">Techne <em>Senior</em></div>
+      <nav class="dtabs" id="dtabs">
+        <button class="dtab" data-screen="home">Your Home <b id="home-count">3</b></button>
+        <button class="dtab" data-screen="queue">Question Queue <b id="queue-count">5</b></button>
+        <button class="dtab" data-screen="repo">Company repository</button>
+        <button class="dtab" data-screen="ide">Your IDE</button>
+        <button class="dtab" data-screen="hot">Hot spots</button>
+        <button class="dtab" data-screen="report">Your year</button>
+      </nav>
+      <div class="dash-right">
+        <span class="credits" id="credits-pill" data-tip="Earn credits by contributing: reviewing, writing and fixing team docs">
+          <i data-icon="coin"></i><b id="credits">1,240</b><span>credits</span><em id="credits-plus">+15</em>
+        </span>
+        <span class="avatar">P</span>
+      </div>
+    </header>
+    <div class="dash-body" id="dash-body"></div>
+    <div class="sheet-wrap" id="sheet-wrap" hidden></div>
+  </section>
+
+  <!-- ───────────── MOBILE ───────────── -->
+  <section class="screen mobile" id="mobile" hidden></section>
+</main>
+
+<div class="narrow">
+  <div class="brand">Techne <em>prototype</em></div>
+  <p>This is a desktop prototype of an IDE and a dashboard, so it needs a laptop-sized window. Open this link on a computer, or widen the window.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="grad.js"></script>
+<script src="gradpages.js"></script>
+<script src="senior.js"></script>
+<script src="seniorpages.js"></script>
+<script src="mobile.js"></script>
+<script>App.start();</script>
+</body>
+</html>
