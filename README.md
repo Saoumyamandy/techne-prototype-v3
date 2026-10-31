@@ -26,7 +26,7 @@ Use the dark bar at the top to switch between **New grad**, **Senior** and **Mob
   - *Restart after failure*: Maya's VENDSYNC fails at step 3 (SQLCODE -911). Senior Techne answers from Priya's twin (3 verified · 1 general), and "Where this comes from" traces each step back to Priya's session, her answer to Techne and her approval.
   - *File copy*: a task, not an error. General steps are mixed with steps from Priya's twin, and one inferred step is sent to Priya to confirm. It ends with a git commit and the save dialog.
 - **Seen before** (`#seen`): Maya's twin already holds the copybook fix, so help is one line with the command and Run in terminal.
-- **Walkthrough styles:** Split (the default), Glass or Both. **Help placement:** terminal button or corner button. The **Senior Techne** toggle sets whether help pops up on its own.
+- **Walkthrough styles:** Split (the default), Glass, Inline (`#inline`: a glass card right against the problem, no connector line) or Both. **Help placement:** terminal button or corner button. The **Senior Techne** toggle sets whether help pops up on its own.
 - **Your twin:** a knowledge graph and timeline. Items are private by default, and you can share them for credits.
 - **Learning path**, **What Techne records** (onboarding and permissions, never used in performance reviews), and **Your year** (a report you own).
 

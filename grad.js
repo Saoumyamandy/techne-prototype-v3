@@ -250,7 +250,7 @@ const Grad = (() => {
     dropAnchored();
     helpBtn().classList.remove('nudge');
     if (knownMode()) { showKnown(); return; }
-    if (opts.wt !== 'glass') { openPanel(true); return; }
+    if (!['glass', 'inline'].includes(opts.wt)) { openPanel(true); return; }
     clearGuide();
     const c = makeCard('acard glass', `
       <div class="ahead">${icon('sparkle')}<b>Senior Techne</b><span>is looking into it</span><button class="gx" data-act="dismiss">${icon('x')}</button></div>
@@ -325,8 +325,9 @@ const Grad = (() => {
     helpBtn().classList.add('away');
     focusOn(s);
     const dots = S.steps.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('');
-    const c = makeCard('gcard glass', `
-      <span class="badge">${i + 1}</span>
+    const inline = opts.wt === 'inline';
+    const c = makeCard(`gcard glass ${inline ? 'inline' : ''}`, `
+      ${inline ? '<i class="notch"></i>' : `<span class="badge">${i + 1}</span>`}
       <div class="ghead"><span>Step ${i + 1} of ${S.steps.length}</span><button class="gx" data-act="end" title="End walkthrough">${icon('x')}</button></div>
       ${App.stepTag(s)}
       <h4>${s.title}</h4>
@@ -350,6 +351,19 @@ const Grad = (() => {
     const T = App.rel($(s.target), root);
     const cw = card.offsetWidth, ch = card.offsetHeight;
     let x, y;
+    if (opts.wt === 'inline') {
+      const W = root.clientWidth, H = root.clientHeight;
+      x = Math.min(Math.max(T.x - 18, 12), W - cw - 12);
+      y = T.y + T.h + 14;
+      const above = y + ch > H - 12;
+      if (above) y = Math.max(12, T.y - ch - 14);
+      card.classList.toggle('above', above);
+      card.style.left = `${x}px`;
+      card.style.top = `${y}px`;
+      card.style.setProperty('--notch', `${Math.min(Math.max(T.x + Math.min(T.w / 2, 36) - x, 18), cw - 26)}px`);
+      svg.innerHTML = '';
+      return;
+    }
     if (s.place === 'editor') {
       const E = App.rel(editor, root);
       x = E.x + E.w - cw - 32;
@@ -455,7 +469,7 @@ const Grad = (() => {
   function startWalk() {
     dropAnchored();
     helpBtn().classList.remove('nudge');
-    if (opts.wt === 'glass') showGlassStep(0);
+    if (['glass', 'inline'].includes(opts.wt)) showGlassStep(0);
     else openPanel(false);
   }
 
@@ -525,7 +539,7 @@ const Grad = (() => {
   }
   function showDone() {
     if (S.done.kind === 'queued') { GradPages.add({ type: 'question', title: S.answer.title, with: 'In the Question Queue', topics: ['COBOL', 'Test data'], vis: 'shared' }); bumpArchive(); }
-    if (opts.wt === 'glass') {
+    if (['glass', 'inline'].includes(opts.wt)) {
       helpBtn().classList.remove('away', 'ready');
       const c = makeCard('acard glass done', `<button class="gx corner-x" data-act="dismiss">${icon('x')}</button>${doneHTML()}`);
       anchor(c);
@@ -754,6 +768,7 @@ const Grad = (() => {
     S = DATA.scenarios[opts.sc] || DATA.scenarios.checked;
     step = -1; ready = false; patched = false; sentToPriya = false;
     ide.dataset.help = opts.help;
+    ide.dataset.wt = opts.wt;
     sp.hidden = true; divider.hidden = true; sp.innerHTML = '';
     modal.hidden = true;
     ['#help-term', '#help-corner'].forEach(s => $(s).className = $(s).className.replace(/\b(nudge|ready|away)\b/g, '').trim());

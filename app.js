@@ -110,7 +110,8 @@ const App = (() => {
     onboarding: { role: 'grad', screen: 'onboard' }, save: { role: 'grad', screen: 'save' },
     filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' },
     seen: { role: 'grad', screen: 'ide', sc: 'checked', seen: '1' },
-    persona: { role: 'senior', screen: 'persona' }, mobile: { role: 'mobile', screen: 'approvals' },
+    persona: { role: 'senior', screen: 'persona' },
+    inline: { role: 'grad', screen: 'ide', sc: 'checked', wt: 'inline' }, mobile: { role: 'mobile', screen: 'approvals' },
   };
   function hostTheme() {
     const t = document.documentElement.dataset.theme;
@@ -176,7 +177,7 @@ const App = (() => {
         <span class="pb-sep"></span>
         <span class="pb-label">Scenario</span>${seg('sc', [['checked', 'Covered'], ['unchecked', 'Not covered'], ['filecopy', 'File copy'], ['restart', 'Restart after failure']])}
         ${state.sc === 'checked' ? `<span class="pb-label">Seen before</span>${seg('seen', [['0', 'Off'], ['1', 'On']])}` : ''}
-        <span class="pb-label">Walkthrough</span>${seg('wt', [['split', 'Split'], ['glass', 'Glass'], ['both', 'Both']])}
+        <span class="pb-label">Walkthrough</span>${seg('wt', [['split', 'Split'], ['glass', 'Glass'], ['inline', 'Inline'], ['both', 'Both']])}
         <span class="pb-label">Help</span>${seg('help', [['terminal', 'Terminal'], ['corner', 'Corner']])}` : ''}
       <span class="pb-right">
         ${seg('theme', [['light', '', 'sun'], ['dark', '', 'moon']])}

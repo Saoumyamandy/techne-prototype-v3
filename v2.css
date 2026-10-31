@@ -716,3 +716,27 @@
 .share-note .ic{width:13px;height:13px}
 .gp{position:relative}
 .rep-modal{position:fixed;z-index:70}
+
+/* Inline walkthrough: a glass card right against the problem, no connector line.
+   The rest of the code softens so the card and its line read as one spot. */
+.gcard.inline{width:340px;padding:12px 14px 12px;border-radius:14px;
+  background:linear-gradient(160deg,rgba(255,255,255,.72),rgba(240,244,255,.5));
+  -webkit-backdrop-filter:blur(14px) saturate(1.8);backdrop-filter:blur(14px) saturate(1.8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 18px 40px -16px rgba(17,24,39,.3),0 0 0 1px rgba(62,99,221,.18);
+  animation:inlin .35s cubic-bezier(.2,.8,.2,1)}
+:root[data-theme="dark"] .gcard.inline{background:linear-gradient(160deg,rgba(40,44,56,.72),rgba(24,27,34,.55));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 40px -16px rgba(0,0,0,.6),0 0 0 1px rgba(112,145,255,.25)}
+@keyframes inlin{from{opacity:0;transform:translateY(-6px) scale(.98)}}
+.gcard.inline.above{animation-name:inlinup}
+@keyframes inlinup{from{opacity:0;transform:translateY(6px) scale(.98)}}
+.gcard.inline .notch{position:absolute;top:-7px;left:var(--notch,24px);width:14px;height:14px;transform:rotate(45deg);border-radius:3px 0 0 0;
+  background:rgba(250,251,255,.85);box-shadow:-1px -1px 0 rgba(62,99,221,.18);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+:root[data-theme="dark"] .gcard.inline .notch{background:rgba(44,48,60,.9)}
+.gcard.inline.above .notch{top:auto;bottom:-7px;border-radius:0 0 3px 0;box-shadow:1px 1px 0 rgba(62,99,221,.18)}
+.gcard.inline h4{font-size:14px;margin:2px 0 4px}
+.gcard.inline .ghead{margin-bottom:4px}
+.gcard.inline .gfoot{margin-top:10px}
+.ide[data-wt="inline"][data-focus="code"] .ln:not(.target){opacity:.4;filter:blur(1.2px)}
+.ide[data-wt="inline"][data-focus="tree"] .tree li:not(.target){opacity:.4;filter:blur(1px)}
+.ide[data-wt="inline"][data-focus="tree"] .ln{opacity:.55;filter:blur(1.2px)}
+.ide[data-wt="inline"][data-focus="term"] .tl:not(.target){opacity:.4;filter:blur(1px)}
+.ide[data-wt="inline"] .ln,.ide[data-wt="inline"] .tl,.ide[data-wt="inline"] .tree li{transition:opacity .35s,filter .35s}
