@@ -766,5 +766,11 @@ const Grad = (() => {
     runStart();
   }
 
-  return { init, start: restart, restart, stop, show, relayout };
+  // Back to a fresh visit: Senior Techne on, archive count as loaded
+  function reset() {
+    seniorOn = true;
+    const t = $('#st-toggle'); t.classList.add('on'); t.setAttribute('aria-checked', 'true');
+    setTimeout(() => { $('#arch-count').textContent = GradPages.total(); });
+  }
+  return { init, start: restart, restart, stop, show, relayout, reset };
 })();

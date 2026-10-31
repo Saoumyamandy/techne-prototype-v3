@@ -527,5 +527,6 @@ const Senior = (() => {
     updateCounts();
   }
 
-  return { init, start, restart: start, stop, show, flag, addInterviewDraft, freshRestart, receiveSent };
+  function hardReset() { interviewDone = false; restartFresh = false; flagged = null; }
+  return { init, start, restart: start, stop, show, flag, addInterviewDraft, freshRestart, receiveSent, hardReset };
 })();

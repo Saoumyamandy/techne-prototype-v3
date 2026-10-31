@@ -214,7 +214,7 @@ const SeniorPages = (() => {
       return;
     }
     if (scr === 'ide') {
-      if (probeState === 'hidden') later(() => { probeState = 'asking'; if (host.querySelector('.sp-ide')) rerender('ide'); }, 1400);
+      if (probeState === 'hidden') later(() => { probeState = 'asking'; if (host.querySelector('.sp-ide')) rerender('ide'); }, 700);
       el.innerHTML = ideHTML();
     } else if (scr === 'hot') el.innerHTML = hotHTML();
     else el.innerHTML = GradPages.reportHTML('senior');

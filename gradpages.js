@@ -183,5 +183,6 @@ const GradPages = (() => {
     if (n && host?.contains(n)) { topic = topic === n.dataset.topic ? null : n.dataset.topic; render('archive', host); }
   });
 
-  return { render, reportHTML, add, addSaved, total, items: () => items };
+  function reset() { items = DATA.archive.map(a => ({ ...a })); topic = null; onbStep = 2; onbRole = 'grad'; }
+  return { render, reportHTML, add, addSaved, total, reset, items: () => items };
 })();

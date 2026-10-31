@@ -187,7 +187,14 @@ const App = (() => {
       if (b && state[s.dataset.key] !== b.dataset.val) set({ [s.dataset.key]: b.dataset.val });
     }));
     bar.querySelector('#pb-screen').onchange = e => set({ screen: e.target.value });
-    bar.querySelector('#pb-replay').onclick = () => modules[state.role].restart(state);
+    bar.querySelector('#pb-replay').onclick = replay;
+  }
+
+  // Replay puts every module back to how a fresh load finds it
+  function replay() {
+    try { localStorage.removeItem('techne-sent-priya'); } catch { /* blocked */ }
+    Grad.reset(); GradPages.reset(); Senior.hardReset(); SeniorPages.reset();
+    modules[state.role].restart(state);
   }
 
   function start() {
@@ -216,6 +223,11 @@ const App = (() => {
       modules[state.role].relayout?.();
     });
     addEventListener('resize', () => modules[state.role].relayout?.());
+    // a short link typed into an open tab works like a fresh visit to it
+    addEventListener('hashchange', () => {
+      const h = location.hash.slice(1);
+      if (TOKENS[h]) set({ seen: '0', sc: 'checked', ...TOKENS[h] });
+    });
     document.addEventListener('click', e => {
       if (!e.target.closest('.synth')) return;
       e.preventDefault(); e.stopPropagation();

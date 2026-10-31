@@ -20,10 +20,12 @@ Previous rounds:
 Use the dark bar at the top to switch between **New grad**, **Senior** and **Mobile**, pick a screen, and compare variants. Press H to hide the bar.
 
 **New grad**
-- **IDE**, with three scenarios:
+- **IDE**, with four scenarios:
   - *Covered*: Priya's twin has a verified answer.
   - *Not covered*: no twin covers it. Your workaround goes to the Question Queue.
+  - *Restart after failure*: Maya's VENDSYNC fails at step 3 (SQLCODE -911). Senior Techne answers from Priya's twin (3 verified · 1 general), and "Where this comes from" traces each step back to Priya's session, her answer to Techne and her approval.
   - *File copy*: a task, not an error. General steps are mixed with steps from Priya's twin, and one inferred step is sent to Priya to confirm. It ends with a git commit and the save dialog.
+- **Seen before** (`#seen`): Maya's twin already holds the copybook fix, so help is one line with the command and Run in terminal.
 - **Walkthrough styles:** Split (the default), Glass or Both. **Help placement:** terminal button or corner button. The **Senior Techne** toggle sets whether help pops up on its own.
 - **Your twin:** a knowledge graph and timeline. Items are private by default, and you can share them for credits.
 - **Learning path**, **What Techne records** (onboarding and permissions, never used in performance reviews), and **Your year** (a report you own).
@@ -35,13 +37,16 @@ Use the dark bar at the top to switch between **New grad**, **Senior** and **Mob
   - *Your impact* is collapsed by default.
 - **Question Queue:** shared by every senior. You claim an item before answering it, and claimed items are locked for everyone else.
 - **Company repository:** every approved doc and its history.
-- **Your IDE:** a recording indicator and Pause, Techne's question card, and the end-of-day interview, which drafts a doc into Your twin's drafts.
+- **Your IDE:** a recording indicator and Pause, a session timeline with the key moments Techne flagged (star a terminal line to see why), Techne's question card with "Why Techne is asking", and the end-of-day interview. Answering drafts a doc into Your twin's drafts.
+- **How Techne's questions are built** (`#persona`): what the new grad persona is built from, what it deliberately doesn't know, what's never used, and how its quality is measured. Every Synthetic badge links here.
 - **Hot spots:** where new grads' questions cluster, and which interviews Techne has planned.
 - **Your year:** the senior's own report.
 
 **Mobile** (phone frame): senior drafts on the go, Techne's questions with quick replies and voice, a new grad asking Senior Techne in Slack, and the new grad's twin.
 
-Short links: `#filecopy`, `#archive`, `#senior`, `#queue`, `#senior-ide`, `#hotspots`, `#mobile`.
+Short links: `#senior-ide`, `#senior`, `#restart`, `#seen`, `#filecopy`, `#persona`, `#onboarding`, `#archive`, `#queue`, `#hotspots`, `#mobile`.
+
+Answer fields on Techne's questions type out a prepared answer whatever keys you press. Replay resets every screen.
 
 All names, code and data are made up.
 
