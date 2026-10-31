@@ -290,6 +290,12 @@ const Grad = (() => {
     clearFocus();
   }
 
+  // Lead with one short line; anything after the first sentence goes behind "More"
+  function brief(html) {
+    const m = html.match(/^(.+?[.!?])\s+(?=[A-Z<])(.+)$/s);
+    if (!m) return `<p>${html}</p>`;
+    return `<p>${m[1]}</p><details class="more"><summary>More</summary><p>${m[2]}</p></details>`;
+  }
   const codeBlock = s => s.code ? `<div class="codeblk">${s.code.replace(/</g, '&lt;')}<div class="acts">
       <button class="pill ghost-pill" data-act="copy">${icon('copy')}<span>Copy</span></button>
       <button class="pill run-pill" data-act="run">${icon('play')}${S.fix.label}</button></div></div>` : '';
@@ -324,7 +330,7 @@ const Grad = (() => {
       <div class="ghead"><span>Step ${i + 1} of ${S.steps.length}</span><button class="gx" data-act="end" title="End walkthrough">${icon('x')}</button></div>
       ${App.stepTag(s)}
       <h4>${s.title}</h4>
-      <p>${s.body}</p>
+      ${brief(s.body)}
       ${sentHTML(s)}${codeBlock(s)}${noteHTML(s)}${whereHTML(s)}
       <div class="gfoot">
         <span class="dots">${dots}</span>
@@ -434,7 +440,7 @@ const Grad = (() => {
     $('#psteps').innerHTML = S.steps.map((s, k) => `
       <li class="pstep ${k === i ? 'on' : k < i ? 'done' : ''}" data-act="goto" data-i="${k}">
         <div class="ps-head"><span class="sn">${k < i ? icon('check') : k + 1}</span><b>${s.title}</b>${k === i ? '' : App.stepTag(s).replace('stag', 'stag mini')}</div>
-        ${k === i ? `<div class="ps-body">${App.stepTag(s)}<p>${s.body}</p>${sentHTML(s)}${codeBlock(s)}${noteHTML(s)}${whereHTML(s)}
+        ${k === i ? `<div class="ps-body">${App.stepTag(s)}${brief(s.body)}${sentHTML(s)}${codeBlock(s)}${noteHTML(s)}${whereHTML(s)}
           <div class="gbtns">${k > 0 ? '<button class="btn ghost" data-act="back">Back</button>' : ''}
           ${k < S.steps.length - 1 ? `<button class="btn dark" data-act="next">Next ${icon('arrow')}</button>` : ''}</div></div>` : ''}
       </li>`).join('');
@@ -465,7 +471,7 @@ const Grad = (() => {
     th.scrollTop = th.scrollHeight;
     later(() => {
       const r = S.reply;
-      th.lastElementChild.querySelector('.abody').innerHTML = `${App.stepTag(r)}<p>${r.text}</p>${r.twin ? '' : `<div class="queued">${icon('users')}Added to the Question Queue for any senior</div>`}`;
+      th.lastElementChild.querySelector('.abody').innerHTML = `${App.stepTag(r)}${brief(r.text)}${r.twin ? '' : `<div class="queued">${icon('users')}Added to the Question Queue for any senior</div>`}`;
       th.scrollTop = th.scrollHeight;
     }, 1000);
   }

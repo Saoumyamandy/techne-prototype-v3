@@ -1,5 +1,5 @@
 // All made-up content: twins, the synthetic persona, three IDE scenarios, the senior's drafts and queue,
-// the company repository, and the content of the round 2 screens.
+// the company repository, and the content of every other screen.
 const DATA = (() => {
   // ── people and their twins. Senior Techne routes questions across these. ──
   const twins = {

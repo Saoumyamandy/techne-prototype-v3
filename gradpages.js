@@ -4,7 +4,7 @@ const GradPages = (() => {
   const $ = s => document.querySelector(s);
   const icon = n => App.icon(n);
   let items = DATA.archive.map(a => ({ ...a }));
-  let topic = null, onbStep = 0, onbRole = 'grad';
+  let topic = null, onbStep = 2, onbRole = 'grad';
 
   const TYPE = { walk: ['twin', 'Walkthrough'], question: ['message', 'Question'], saved: ['archive', 'Saved work'], note: ['edit', 'Note'] };
   const VIS = { private: ['lock', 'Only you'], shared: ['users', 'Shared with team'], published: ['coin', 'Published'] };
@@ -105,7 +105,11 @@ const GradPages = (() => {
             `<div class="perm-g"><b>${g}</b>${rows.map(([l, on, hint]) => `<label class="switch-row"><input type="checkbox" ${on ? 'checked' : ''} ${hint === 'Never recorded' ? 'disabled' : ''}><span class="sw"><i></i></span>${l}${hint ? `<small>${hint}</small>` : ''}</label>`).join('')}</div>`).join('')}
           <div class="perm-g"><b>Never record</b><div class="never">${['Personal email', 'HR portal', 'Banking', 'Health sites'].map(n => `<span class="chip">${n}${icon('x')}</span>`).join('')}<button class="chip add">${icon('plus')}Add</button></div></div>
         </div>
-        <div class="promise">${icon('shield')}<div><b>Never used in performance reviews.</b><span>You own your twin. You can see, edit and delete anything in it. Your manager only sees what you choose to share.</span></div></div>`,
+        <ol class="promises">
+          <li>${icon('lock')}<div><b>Private until you share.</b><span>Your twin is yours. Nobody sees anything in it until you choose to share it.</span></div></li>
+          <li>${icon('pause')}<div><b>Pause any time.</b><span>One click stops recording. Nothing is captured until you resume.</span></div></li>
+          <li>${icon('shield')}<div><b>Never used in performance reviews.</b><span>You can see, edit and delete anything in your twin. Your manager only sees what you choose to share.</span></div></li>
+        </ol>`,
       `<h2>You’re set</h2><p>Your twin starts learning from your next task. Senior Techne is on, so it’ll offer help when something breaks.</p>
         <ul class="summary"><li>${icon('check')}${onbRole === 'grad' ? 'Target role: Procurement engineer' : 'Expertise: COBOL and procurement'}</li><li>${icon('check')}Recording: IDE, docs and #proc channels</li><li>${icon('check')}Screen video: off</li><li>${icon('check')}Never recorded: 4 kinds of site</li></ul>
         <button class="btn primary" data-gact="to-ide">${icon('code')}Open the IDE</button>`,
@@ -122,12 +126,12 @@ const GradPages = (() => {
     const R = DATA.report[role];
     return `<div class="gp report">
       <div class="gp-head"><div><span class="own">${icon('lock')}Owned by you · only you see this</span><h1>${R.title}</h1><p>${R.who} · ${R.period}</p></div>
-        <div class="rep-acts"><button class="btn ghost" data-gact="rep-edit">${icon('edit')}Edit before sharing</button><button class="btn primary" data-gact="rep-share">${icon('send')}Share with my manager</button></div></div>
+        <div class="rep-acts"><button class="btn ghost" data-gact="rep-share">${icon('send')}Share with my manager</button><button class="btn primary" data-gact="rep-download">${icon('arrow')}Download for yourself</button></div></div>
       <div class="rep-stats">${R.stats.map(([n, l]) => `<div class="card"><b>${n}</b><span>${l}</span></div>`).join('')}</div>
       <div class="learn-grid">
         <div class="card"><div class="ctitle">How your twin grew</div>
           <ul class="cmp">${R.growth.map(([t, a, b]) => `<li><span>${t}</span><div class="bars"><i class="sr" style="width:${b}%"></i><i class="me was" style="width:${a}%"></i></div><b>${a}→${b}%</b></li>`).join('')}</ul>
-          <span class="legend2"><i class="me"></i>Start of year <i class="sr"></i>Now</span></div>
+          <span class="legend2"><i class="was"></i>Start of year <i class="sr"></i>Now</span></div>
         <div class="card"><div class="ctitle">Highlights</div><ul class="hl-list">${R.highlights.map(h => `<li>${icon('star')}${h}</li>`).join('')}</ul></div>
       </div>
       <p class="rep-note">${icon('shield')}Built from what you saved and shared. Recordings are never used in performance reviews, and your manager sees this report only if you share it.</p>
@@ -153,9 +157,21 @@ const GradPages = (() => {
       case 'quiz': App.toast(`${icon('twin')}Priya’s twin will quiz you on vendor files at the end of the day. 5 questions.`); return;
       case 'onb-next': onbStep = Math.min(3, onbStep + 1); break;
       case 'onb-back': onbStep = Math.max(0, onbStep - 1); break;
-      case 'to-ide': onbStep = 0; App.set({ screen: 'ide' }); return;
-      case 'rep-share': App.toast(`${icon('send')}Shared with your manager. You can take it back any time.`); return;
-      case 'rep-edit': App.toast(`${icon('edit')}Editing opens in round 3. Nothing is shared until you say so.`); return;
+      case 'to-ide': onbStep = 2; App.set({ screen: 'ide' }); return;
+      case 'rep-download': App.toast(`${icon('check')}Downloaded your-year-2026.pdf. It’s yours to keep.`); return;
+      case 'rep-share': {
+        const where = el.closest('.gp');
+        where.querySelector('.rep-modal')?.remove();
+        where.insertAdjacentHTML('beforeend', `<div class="modal-wrap rep-modal"><div class="modal rep-preview" role="dialog" aria-label="Share with your manager">
+          <div class="m-head"><div><span class="m-trig">${icon('lock')}Nothing is sent until you press Share</span><h2>Choose what your manager sees</h2></div><button class="gx" data-gact="rep-close">${icon('x')}</button></div>
+          <div class="m-body"><div class="share-list">${[['Your numbers', 'Tasks saved, walkthroughs, docs published, credits'], ['How your twin grew', 'Topics at the start of the year and now'], ['Highlights', '3 things you did that helped the team']].map(([t, d], i) =>
+            `<label class="share-row"><input type="checkbox" ${i < 2 ? 'checked' : ''}><div><b>${t}</b><span>${d}</span></div></label>`).join('')}</div>
+            <p class="share-note">${icon('shield')}Recordings and your private twin are never included.</p></div>
+          <div class="m-foot"><span class="mut">You can take it back any time.</span><button class="btn ghost" data-gact="rep-close">Cancel</button><button class="btn primary" data-gact="rep-send">${icon('send')}Share</button></div></div></div>`);
+        return;
+      }
+      case 'rep-close': el.closest('.rep-modal').remove(); return;
+      case 'rep-send': { const n = el.closest('.modal').querySelectorAll('input:checked').length; el.closest('.rep-modal').remove(); App.toast(`${icon('send')}Shared ${n} section${n === 1 ? '' : 's'} with your manager. You can take it back any time.`); return; }
     }
     render(current, host);
   }
