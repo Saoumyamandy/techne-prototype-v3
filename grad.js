@@ -8,7 +8,8 @@ const Grad = (() => {
 
   let root, ide, editor, termBody, layer, svg, sp, divider, side, gpage, modal;
   let S, opts;
-  let step = -1, ready = false, seniorOn = true, patched = false, screen = 'ide';
+  let step = -1, ready = false, seniorOn = true, patched = false, screen = 'ide', sentToPriya = false;
+  const knownMode = () => opts.seen === '1' && S.known;
   let placed = null;
   let anchored = [];
   let panelW = 460;
@@ -186,8 +187,22 @@ const Grad = (() => {
     ? `<span class="vbadge ${a.mixed ? 'mixed' : ''}">${icon('twin')}${App.twinName(a.twin)}’s twin</span>`
     : `<span class="vbadge warn">${icon('alert')}No twin covers this</span>`;
 
+  // Help fades with what you know: one line and one click when your twin already holds the fix
+  function showKnown() {
+    dropAnchored();
+    helpBtn().classList.remove('nudge');
+    const K = S.known;
+    const c = makeCard('acard glass seen-card', `
+      <div class="ahead">${icon('twin')}<b>Your twin</b><span>has this one</span><button class="gx" data-act="dismiss">${icon('x')}</button></div>
+      <div class="seen-line">${K.line}</div>
+      <div class="codeblk">${K.code}<div class="acts"><button class="pill run-pill" data-act="run">${icon('play')}Run in terminal</button></div></div>
+      <div class="seen-foot"><span class="stag st-ok mini">${icon('archive')}${K.when}</span><button class="link sm" data-act="all-steps">Show all steps ${icon('chev-down')}</button></div>`);
+    anchor(c);
+  }
+
   function showNudge() {
     if (step >= 0 || !sp.hidden || anchored.length || screen !== 'ide') return;
+    if (knownMode()) { showKnown(); return; }
     helpBtn().classList.add('nudge');
     const a = S.answer;
     const c = makeCard('acard glass nudge-card', `
@@ -234,6 +249,7 @@ const Grad = (() => {
     if (!ready) { App.toast(`${icon('info')}Senior Techne is still reading your workspace. Try again in a second.`); return; }
     dropAnchored();
     helpBtn().classList.remove('nudge');
+    if (knownMode()) { showKnown(); return; }
     if (opts.wt !== 'glass') { openPanel(true); return; }
     clearGuide();
     const c = makeCard('acard glass', `
@@ -278,7 +294,17 @@ const Grad = (() => {
       <button class="pill ghost-pill" data-act="copy">${icon('copy')}<span>Copy</span></button>
       <button class="pill run-pill" data-act="run">${icon('play')}${S.fix.label}</button></div></div>` : '';
   const noteHTML = s => s.note ? `<div class="gnote">${icon('info')}<span>${s.note}</span></div>` : '';
-  const sentHTML = s => s.sentTo ? `<div class="sent-to">${icon('send')}Sent to ${App.twinName(s.sentTo)} to confirm. You can still use it.</div>` : '';
+  const sentHTML = s => !s.sentTo ? ''
+    : sentToPriya ? `<div class="sent-to done">${icon('check')}Sent to ${App.twinName(s.sentTo)} · it’s in her drafts to confirm</div>`
+    : `<div class="sent-to">${icon('alert')}<span>Inferred: nobody has verified this yet.</span><button class="btn primary sm" data-act="send-priya">${icon('send')}Send to Priya</button></div>`;
+  // The inferred step lands first in Priya's drafts, in this tab and in any other open tab
+  function sendToPriya() {
+    sentToPriya = true;
+    try { localStorage.setItem('techne-sent-priya', String(Date.now())); } catch { /* storage blocked: same-tab only */ }
+    Senior.receiveSent();
+    App.toast(`${icon('send')}Sent to Priya R. It’s first in her drafts.`);
+    if (opts.wt === 'split') showPanelStep(step); else showGlassStep(step);
+  }
   // A step with a trail shows where the knowledge came from, end to end; others keep a one-line source
   const whereHTML = s => s.trail
     ? `<details class="where"><summary>${icon('info')}Where this comes from</summary><ol class="trail">${s.trail.map(([when, ic, what, sub]) =>
@@ -476,6 +502,7 @@ const Grad = (() => {
   function doneHTML() {
     const d = S.done;
     const head = `<div class="dhead"><span class="okic">${icon('check')}</span><div><b>${d.title}</b><span>${d.sub}</span></div></div>`;
+    if (knownMode()) return `${head}<div class="thanks">${icon('twin')}<span>Fixed without the walkthrough. Your twin will keep this help short next time.</span></div>`;
     if (d.kind === 'queued') return `${head}
       <div class="queued-box">
         <b>${icon('users')}Sent to the Question Queue</b>
@@ -484,7 +511,7 @@ const Grad = (() => {
       </div>
       <button class="link" data-act="to-senior">See it in the Question Queue ${icon('arrow')}</button>`;
     if (d.kind === 'save') return `${head}
-      <div class="sent-to">${icon('send')}Step 4 went to Priya R. to confirm. Her answer updates this walkthrough.</div>
+      ${sentToPriya ? `<div class="sent-to">${icon('send')}Step 4 went to Priya R. to confirm. Her answer updates this walkthrough.</div>` : ''}
       <p class="q">Commit, and save how you did this to your twin?</p>
       <div class="facts" data-fb><button class="btn primary" data-act="commit">${icon('git')}Commit and save to your twin</button><button class="btn ghost" data-act="dismiss-done">Not now</button></div>`;
     return `${head}<p class="q">Did this walkthrough help?</p>
@@ -596,6 +623,8 @@ const Grad = (() => {
         helpBtn().classList.remove('nudge');
         break;
       case 'walk': startWalk(); break;
+      case 'all-steps': startWalk(); break;
+      case 'send-priya': sendToPriya(); break;
       case 'next': goStep(step + 1); break;
       case 'back': goStep(step - 1); break;
       case 'goto': if (+el.dataset.i !== step) goStep(+el.dataset.i); break;
@@ -715,9 +744,9 @@ const Grad = (() => {
 
   function restart(st) {
     stop();
-    opts = { wt: st.wt, help: st.help, sc: st.sc };
+    opts = { wt: st.wt, help: st.help, sc: st.sc, seen: st.seen };
     S = DATA.scenarios[opts.sc] || DATA.scenarios.checked;
-    step = -1; ready = false; patched = false;
+    step = -1; ready = false; patched = false; sentToPriya = false;
     ide.dataset.help = opts.help;
     sp.hidden = true; divider.hidden = true; sp.innerHTML = '';
     modal.hidden = true;

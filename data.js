@@ -98,20 +98,20 @@ const DATA = (() => {
     },
     steps: [
       {
-        target: '#t-err', spot: ['#t-err'], place: 'editor', twin: 'priya', status: 'verified',
+        target: '#t-err', spot: ['#t-err'], place: 'editor', twin: 'priya', status: 'verified', knownByYou: 'Saved to your twin · Oct 12',
         source: 'Priya R.’s answer to Sam, Aug 2026. Checked by Priya 3 days ago.',
         title: 'This line pulls in a shared file',
         body: '<code>COPY VENDREC.</code> pastes in the vendor record layout from a <b>copybook</b>, a file that many programs share. The build stopped here because the compiler couldn’t find that file.',
       },
       {
-        target: `#${fid('VENDREC.cpy')} span`, spot: [`#${fid('copybooks')}`, `#${fid('VENDREC.cpy')}`], place: 'side', twin: 'priya', status: 'verified',
+        target: `#${fid('VENDREC.cpy')} span`, spot: [`#${fid('copybooks')}`, `#${fid('VENDREC.cpy')}`], place: 'side', twin: 'priya', status: 'verified', knownByYou: 'Saved to your twin · Oct 12',
         source: 'Runbook “Local COBOL builds”, written from Priya R.’s recorded session in Mar 2024.',
         title: 'The file is right here',
         body: '<code>VENDREC.cpy</code> lives in <code>copybooks/</code>. The compiler only looks in folders listed in <code>COBCPY</code>, and your shell doesn’t set it yet.',
         note: 'Every procurement repo keeps its copybooks this way.',
       },
       {
-        target: '#t-prompt .pwrap', spot: ['#t-prompt .pwrap'], place: 'term', twin: 'priya', status: 'verified',
+        target: '#t-prompt .pwrap', spot: ['#t-prompt .pwrap'], place: 'term', twin: 'priya', status: 'verified', knownByYou: 'Saved to your twin · Oct 12',
         source: 'Same runbook. Used 12 times; nobody has reported it wrong.',
         title: 'Point the compiler at it, then rebuild',
         body: 'Tell this shell where the copybooks are, then run the build again.',
@@ -125,6 +125,8 @@ const DATA = (() => {
       out: [['mut', '→ cobc -x -o bin/PROCVEND src/PROCVEND.cbl'], ['', '<span class="ok">✓ PROCVEND compiled</span> <span class="mut">· 0 errors · 1.4s</span>']],
     },
     done: { title: 'Build passed', sub: 'PROCVEND compiled with 0 errors.', kind: 'helped' },
+    // When Maya's own twin already holds this fix, help shrinks to one line
+    known: { line: 'You’ve fixed this before: set COBCPY, then rebuild', code: 'export COBCPY=./copybooks\n./build.sh PROCVEND', when: 'Saved to your twin · Oct 12' },
     reply: { twin: 'priya', status: 'verified', text: 'build.sh doesn’t set COBCPY because each team keeps copybooks somewhere different. Add the export to ~/.zshrc once and it works in every procurement repo.' },
   };
 
@@ -424,13 +426,6 @@ const DATA = (() => {
       from: ['Your session · today, 4:18 PM', 'Your answer to Techne · today'],
     },
     {
-      id: 'd-sent1', kind: 'sent', title: 'Confirm: PDF invoices need their own folder', ago: '20m ago', topic: 'Procurement', askedBy: 'Maya Chen', fromScenario: 'filecopy',
-      shot: shots.filecopy,
-      inferred: 'Your twin inferred this from your Mar 2025 session, where the invoice reporting job read every file in invoices/. Maya used it in PROC-512.',
-      steps: [['PDFs go to invoices_pdf/', 'The invoice reporting job reads every file in <code>invoices/</code> as text, so a PDF there would break it.'], ['Copy before the done marker', 'Same rule as every other file in the job.']],
-      from: ['Maya’s walkthrough of PROC-512', 'Your session · Mar 12 2025'],
-    },
-    {
       id: 'd-sent2', kind: 'sent', title: 'How do I read the vendor VSAM file for a report?', ago: '3h ago', topic: 'Procurement', askedBy: 'Sam Okafor',
       shot: shots.vsam,
       steps: [['VSAM files aren’t text', 'VENDMAST is a mainframe VSAM file in EBCDIC with packed fields, so pandas can’t read it as CSV.'], ['Read the nightly export instead', 'Reports read <code>/data/exports/vendmast.csv</code>, refreshed at 2 AM. Run <code>procutil export vendmast</code> for fresher data.']],
@@ -450,6 +445,15 @@ const DATA = (() => {
       from: ['Your session · Oct 28'],
     },
   ];
+  // Lands first in Priya's drafts when Maya presses "Send to Priya" on the inferred file-copy step
+  const sentDraft =
+  {
+      id: 'd-sent1', kind: 'sent', title: 'Confirm: PDF invoices need their own folder', ago: 'just now', topic: 'Procurement', askedBy: 'Maya Chen', fromScenario: 'filecopy',
+      shot: shots.filecopy,
+      inferred: 'Your twin inferred this from your Mar 2025 session, where the invoice reporting job read every file in invoices/. Maya used it in PROC-512.',
+      steps: [['PDFs go to invoices_pdf/', 'The invoice reporting job reads every file in <code>invoices/</code> as text, so a PDF there would break it.'], ['Copy before the done marker', 'Same rule as every other file in the job.']],
+      from: ['Maya’s walkthrough of PROC-512', 'Your session · Mar 12 2025'],
+    };
   // Added to drafts when Priya finishes the end-of-day interview
   const interviewDraft = {
     id: 'd-int1', kind: 'interview', title: 'Finding and checking a failed VENDSYNC run', ago: 'just now', topic: 'Procurement',
@@ -595,7 +599,7 @@ const DATA = (() => {
 
   // ── New grad: Your Techne archive, learning path, report ──
   const archive = [
-    { id: 'z1', date: 'Oct 26', type: 'walk', title: 'Copybook not found', with: 'Priya R.’s twin', topics: ['COBOL', 'Copybooks'], vis: 'private' },
+    { id: 'z1', date: 'Oct 12', type: 'saved', title: 'Copybook not found: set COBCPY, then rebuild', with: 'Saved fix · with Priya R.’s twin', topics: ['COBOL', 'Copybooks'], vis: 'private' },
     { id: 'z2', date: 'Oct 26', type: 'question', title: 'Invalid numeric data in PO-AMT', with: 'In the Question Queue', topics: ['COBOL', 'Test data'], vis: 'shared' },
     { id: 'z3', date: 'Oct 22', type: 'saved', title: 'Setting up COBCPY once for every repo', with: 'Published · +15 credits', topics: ['COBOL', 'Copybooks'], vis: 'published' },
     { id: 'z4', date: 'Oct 20', type: 'walk', title: 'Reading a compile listing', with: 'Priya R.’s twin', topics: ['COBOL'], vis: 'private' },
@@ -637,5 +641,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, sentDraft, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
 })();

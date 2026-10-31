@@ -29,6 +29,7 @@ const Senior = (() => {
 
   function reset() {
     drafts = DATA.drafts.map(d => ({ ...d, status: 'todo' }));
+    if (sentRecently()) drafts.unshift({ ...DATA.sentDraft, status: 'todo', fresh: true });
     if (restartFresh) Object.assign(drafts.find(x => x.id === 'd-restart'), { fresh: true, ago: 'just now' });
     if (interviewDone) drafts.unshift({ ...DATA.interviewDraft, status: 'todo', fresh: true });
     queue = DATA.queue.map(q => ({ ...q, status: 'todo' }));
@@ -493,6 +494,25 @@ const Senior = (() => {
   function start(st) { reset(); show(st.screen); }
   function stop() { timers.forEach(clearTimeout); timers = []; closeSheet(); SeniorPages.stop(); }
   function flag(id) { flagged = id; }
+  // Maya's inferred step, sent from the new grad side (maybe from another tab)
+  function sentRecently() {
+    try { const t = +localStorage.getItem('techne-sent-priya'); return t && Date.now() - t < 6 * 3600e3; } catch { return false; }
+  }
+  function receiveSent() {
+    if (!drafts || drafts.some(d => d.id === DATA.sentDraft.id)) return;
+    drafts.unshift({ ...DATA.sentDraft, status: 'todo', fresh: true });
+    if (screen === 'home' && sheetWrap.hidden) { draftTab = 'todo'; show('home'); } else updateCounts();
+  }
+  function dropSent() {
+    if (!drafts) return;
+    drafts = drafts.filter(d => d.id !== DATA.sentDraft.id);
+    if (screen === 'home' && sheetWrap.hidden) show('home'); else updateCounts();
+  }
+  addEventListener('storage', e => {
+    if (e.key !== 'techne-sent-priya') return;
+    if (e.newValue) receiveSent(); else dropSent();
+  });
+
   // Called when Priya answers the question card: the restart draft is freshly drafted from it
   let restartFresh = false;
   function freshRestart() {
@@ -507,5 +527,5 @@ const Senior = (() => {
     updateCounts();
   }
 
-  return { init, start, restart: start, stop, show, flag, addInterviewDraft, freshRestart };
+  return { init, start, restart: start, stop, show, flag, addInterviewDraft, freshRestart, receiveSent };
 })();

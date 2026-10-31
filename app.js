@@ -96,7 +96,7 @@ const App = (() => {
     senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['report', 'Year-end report']],
     mobile: [['approvals', 'Senior · your twin’s drafts'], ['probes', 'Senior · Techne’s questions'], ['slack', 'New grad · Slack'], ['archive', 'New grad · your twin']],
   };
-  const state = { role: 'grad', screen: 'ide', wt: 'split', help: 'terminal', sc: 'checked', theme: 'light' };
+  const state = { role: 'grad', screen: 'ide', wt: 'split', help: 'terminal', sc: 'checked', seen: '0', theme: 'light' };
   const modules = {};
   let started = null;
 
@@ -108,7 +108,8 @@ const App = (() => {
     'senior-ide': { role: 'senior', screen: 'ide' }, hotspots: { role: 'senior', screen: 'hot' },
     archive: { role: 'grad', screen: 'archive' }, learning: { role: 'grad', screen: 'learn' },
     onboarding: { role: 'grad', screen: 'onboard' }, save: { role: 'grad', screen: 'save' },
-    filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' }, mobile: { role: 'mobile', screen: 'approvals' },
+    filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' },
+    seen: { role: 'grad', screen: 'ide', sc: 'checked', seen: '1' }, mobile: { role: 'mobile', screen: 'approvals' },
   };
   function hostTheme() {
     const t = document.documentElement.dataset.theme;
@@ -151,7 +152,7 @@ const App = (() => {
       mod.start(state);
       return;
     }
-    const restartKeys = state.role === 'grad' ? ['wt', 'help', 'sc'] : [];
+    const restartKeys = state.role === 'grad' ? ['wt', 'help', 'sc', 'seen'] : [];
     if (restartKeys.some(k => prev[k] !== state[k])) mod.restart(state);
     else if (prev.screen !== state.screen) mod.show?.(state.screen);
     else if (prev.theme !== state.theme) mod.relayout?.();
@@ -173,6 +174,7 @@ const App = (() => {
       ${state.role === 'grad' && (state.screen === 'ide' || state.screen === 'save') ? `
         <span class="pb-sep"></span>
         <span class="pb-label">Scenario</span>${seg('sc', [['checked', 'Covered'], ['unchecked', 'Not covered'], ['filecopy', 'File copy'], ['restart', 'Restart after failure']])}
+        ${state.sc === 'checked' ? `<span class="pb-label">Seen before</span>${seg('seen', [['0', 'Off'], ['1', 'On']])}` : ''}
         <span class="pb-label">Walkthrough</span>${seg('wt', [['split', 'Split'], ['glass', 'Glass'], ['both', 'Both']])}
         <span class="pb-label">Help</span>${seg('help', [['terminal', 'Terminal'], ['corner', 'Corner']])}` : ''}
       <span class="pb-right">
@@ -196,6 +198,8 @@ const App = (() => {
     Senior.init();
     Mobile.init();
     state.theme = hostTheme();
+    // Opening the start of a run-through clears anything sent to Priya in an earlier one, in every open tab
+    if (['filecopy', 'senior-ide'].includes(location.hash.slice(1))) { try { localStorage.removeItem('techne-sent-priya'); } catch { /* blocked */ } }
     readHash();
     writeHash();
     apply();
