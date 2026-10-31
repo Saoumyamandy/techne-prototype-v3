@@ -1,4 +1,4 @@
-// Mobile tab: one phone frame, four flows. Seniors review their twin's drafts and answer Nova on the go;
+// Mobile tab: one phone frame, four flows. Seniors review their twin's drafts and answer Techne's questions on the go;
 // new grads ask Senior Techne in Slack and look through their own twin.
 const Mobile = (() => {
   const $ = s => document.querySelector(s);
@@ -10,7 +10,7 @@ const Mobile = (() => {
 
   const INFO = {
     approvals: ['Senior', 'Your twin’s drafts', 'Review what your twin drafted from your work, between meetings. Nothing is approved without opening it, and every approval can be undone.'],
-    probes: ['Senior', 'Nova’s questions', 'Nova, a synthetic new grad, asks about key moments from your day. Tap a reply or record a voice note.'],
+    probes: ['Senior', 'Techne’s questions', 'Techne asks as a synthetic new grad about key moments from your day. Tap a reply or record a voice note.'],
     slack: ['New grad', 'Slack with Senior Techne', 'Ask like you’d message a colleague. Every answer says whose twin it came from.'],
     archive: ['New grad', 'Your twin', 'What you’ve saved and learned. Private until you share it.'],
   };
@@ -61,7 +61,7 @@ const Mobile = (() => {
     const P = DATA.seniorIde.probe;
     if (probe === 'done') return `<div class="m-app center"><span class="okic">${icon('check')}</span><h3>Thanks, Priya</h3><p class="m-sub">Your twin drafted this into your drafts for you to check before anyone sees it.</p><button class="btn ghost" data-mact="probe-reset">Show the question again</button></div>`;
     return `<div class="m-app">
-      <div class="m-title"><h2>Nova asks</h2>${App.synth()}</div>
+      <div class="m-title"><h2>Techne asks</h2>${App.synth()}</div>
       <p class="m-sub">About a key moment from today · 1 of 3</p>
       <div class="m-q">${P.q}<span class="chip">${icon('terminal')}${P.at}</span></div>
       <div class="m-label">Quick replies</div>

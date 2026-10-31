@@ -93,8 +93,8 @@ const App = (() => {
   // ── state, kept in the hash so a reload or shared link lands on the same view ──
   const SCREENS = {
     grad: [['ide', 'IDE'], ['save', 'Describe-task save'], ['archive', 'Your twin (archive)'], ['learn', 'Learning path'], ['onboard', 'Onboarding + permissions'], ['report', 'Year-end report']],
-    senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE + Nova'], ['hot', 'Hot spots'], ['report', 'Year-end report']],
-    mobile: [['approvals', 'Senior · your twin’s drafts'], ['probes', 'Senior · Nova’s questions'], ['slack', 'New grad · Slack'], ['archive', 'New grad · your twin']],
+    senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['report', 'Year-end report']],
+    mobile: [['approvals', 'Senior · your twin’s drafts'], ['probes', 'Senior · Techne’s questions'], ['slack', 'New grad · Slack'], ['archive', 'New grad · your twin']],
   };
   const state = { role: 'grad', screen: 'ide', wt: 'split', help: 'terminal', sc: 'checked', theme: 'light' };
   const modules = {};

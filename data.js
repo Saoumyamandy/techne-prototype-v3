@@ -10,10 +10,10 @@ const DATA = (() => {
 
   // The synthetic new grad who interviews seniors. Always shown with a Synthetic badge.
   const persona = {
-    name: 'Nova',
+    name: 'Techne',
     label: 'Synthetic new grad',
     builtFrom: ['214 questions real new grads asked, Jan–Oct 2026', '38 onboarding tickets', '#proc-help Slack, last 12 months'],
-    note: 'Nova isn’t a real person. Nova asks the questions new grads ask most, so seniors’ twins learn the why behind their work.',
+    note: 'When Techne interviews seniors, it asks as a synthetic new grad: the questions real new grads ask, so seniors’ twins learn the why.',
   };
 
   const tree = [
@@ -391,7 +391,7 @@ const DATA = (() => {
   const interviewDraft = {
     id: 'd-int1', kind: 'interview', title: 'Restarting VENDSYNC after a lock timeout', ago: 'just now', topic: 'Procurement',
     steps: [['Restart from the failed step', 'Steps 1 and 2 already committed. Rerunning them inserts duplicate vendor rows.'], ['Check the count', 'More than 1% off yesterday’s count means a partial load. Hold the PO batch.'], ['Never skip the reorg alone', 'Only with Dev K.’s OK when the batch window is at risk. Prefer delaying POBATCH.']],
-    from: ['Your interview with Nova · today', 'Your session · yesterday'],
+    from: ['Your interview with Techne · today', 'Your session · yesterday'],
   };
 
   // Question Queue: shared by every senior. Only here do claims and locks exist.
@@ -453,7 +453,7 @@ const DATA = (() => {
       a: 'Restart from the failed step, never the top: steps 1 and 2 already committed, so rerunning them duplicates vendor rows. Then check the count is within 1% of yesterday’s.',
       src: 'Your session · yesterday · checked by you',
       gapQ: 'Can PROCINV run twice in one night?',
-      gapA: 'I don’t know yet. You haven’t covered this in a session or interview. Nova can ask you about it on Friday.',
+      gapA: 'I don’t know yet. You haven’t covered this in a session or interview. Techne can ask you about it on Friday.',
     },
   };
 
@@ -493,9 +493,9 @@ const DATA = (() => {
 
   const hotspots = [
     { topic: 'Copybooks and COBCPY', n: 18, trend: -30, cover: 'covered', twin: 'priya', next: null },
-    { topic: 'Blank or bad numeric data (S0C7)', n: 14, trend: 55, cover: 'partial', twin: 'dev', next: 'Nova interviews Dev K. · Thu' },
+    { topic: 'Blank or bad numeric data (S0C7)', n: 14, trend: 55, cover: 'partial', twin: 'dev', next: 'Techne interviews Dev K. · Thu' },
     { topic: 'VSAM files for reporting', n: 11, trend: 0, cover: 'covered', twin: 'priya', next: null },
-    { topic: 'Rerunning PROCINV', n: 9, trend: null, cover: 'gap', twin: null, next: 'Nova interviews Priya R. · Fri' },
+    { topic: 'Rerunning PROCINV', n: 9, trend: null, cover: 'gap', twin: null, next: 'Techne interviews Priya R. · Fri' },
     { topic: 'PDF invoices in the file copy', n: 6, trend: null, cover: 'inferred', twin: 'priya', next: 'Waiting on Priya R. to confirm' },
     { topic: 'TAXTBL ownership', n: 5, trend: 25, cover: 'gap', twin: null, next: 'Open in Question Queue' },
   ];
@@ -543,9 +543,9 @@ const DATA = (() => {
     },
     senior: {
       who: 'Priya R.', title: 'Your twin this year', period: 'Jan–Oct 2026',
-      stats: [['612', 'questions your twin answered'], ['41', 'new grads helped'], ['128', 'docs you approved'], ['12', 'interviews with Nova']],
+      stats: [['612', 'questions your twin answered'], ['41', 'new grads helped'], ['128', 'docs you approved'], ['12', 'interviews with Techne']],
       growth: [['COBOL builds', 70, 95], ['Vendor sync', 40, 92], ['Nightly file copy', 20, 88], ['VSAM exports', 30, 85]],
-      highlights: ['Your twin answered 9 in 10 COBOL build questions without anyone waiting.', 'Interviews with Nova filled 6 gaps new grads kept hitting.', 'Copybook questions dropped 30% since your runbook was published.'],
+      highlights: ['Your twin answered 9 in 10 COBOL build questions without anyone waiting.', 'Interviews with Techne filled 6 gaps new grads kept hitting.', 'Copybook questions dropped 30% since your runbook was published.'],
     },
   };
 

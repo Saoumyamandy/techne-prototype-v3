@@ -9,7 +9,7 @@
 .toast-undo{margin-left:6px;padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.14);color:inherit;font-weight:600;font-size:12px}
 :root[data-theme="dark"] .toast-undo{background:rgba(0,0,0,.1)}
 
-/* Synthetic badge: shown on every Nova element */
+/* Synthetic badge: shown wherever Techne asks as a new grad */
 .synth{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:999px;background:repeating-linear-gradient(135deg,var(--chip) 0 6px,transparent 6px 12px),var(--surface);border:1px dashed var(--faint);color:var(--ink-2);font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;cursor:help}
 .synth .ic{width:11px;height:11px}
 .synth[data-tip]:hover::after{right:auto;left:0;text-transform:none;letter-spacing:0;font-weight:400}

@@ -1,5 +1,5 @@
-// Senior pages: Your IDE (recording + Nova's in-IDE question), the end-of-day interview with Nova,
-// hot spots, and the senior's year-end report. Nova is synthetic and always badged as such.
+// Senior pages: Your IDE (recording + Techne's in-IDE question), the end-of-day interview,
+// hot spots, and the senior's year-end report. When Techne asks as a new grad it is synthetic, and always badged as such.
 const SeniorPages = (() => {
   const $ = s => document.querySelector(s);
   const icon = n => App.icon(n);
@@ -25,7 +25,7 @@ const SeniorPages = (() => {
         <ul class="tree">${[['procurement-batch', 1, 0], ['jcl', 1, 1], ['VENDSYNC.jcl', 0, 2, true], ['POBATCH.jcl', 0, 2], ['VSAMREORG.jcl', 0, 2], ['runbooks', 1, 1]].map(([n, dir, d, on]) =>
           `<li class="${dir ? 'dir' : 'file'} ${on ? 'on' : ''}" style="--d:${d}">${dir ? `<i class="chev">${icon('chev-down')}</i>` : ''}${icon(dir ? 'folder' : 'file')}<span>${n}</span></li>`).join('')}</ul>
         <div class="label">Your twin today</div>
-        <ul class="twin-today"><li>${icon('video')}<span>2 sessions recorded</span></li><li>${icon('star')}<span>3 key moments found</span></li><li>${icon('sparkle')}<span>3 questions from Nova</span></li></ul>
+        <ul class="twin-today"><li>${icon('video')}<span>2 sessions recorded</span></li><li>${icon('star')}<span>3 key moments found</span></li><li>${icon('sparkle')}<span>3 questions from Techne</span></li></ul>
         <div class="me"><span class="avatar">P</span><div><b>Priya R.</b><span>Senior · COBOL and procurement</span></div></div>
       </aside>
       <div class="main">
@@ -51,11 +51,11 @@ const SeniorPages = (() => {
   function probeHTML() {
     if (probeState === 'hidden' || !recording) return '';
     const P = DATA.seniorIde.probe;
-    if (probeState === 'answered') return `<div class="probe-card glass done"><div class="pc-head">${App.synth()}<b>Nova</b><button class="gx" data-sact="probe-close">${icon('x')}</button></div>
+    if (probeState === 'answered') return `<div class="probe-card glass done"><div class="pc-head"><b>Techne · asking as a new grad</b>${App.synth()}<button class="gx" data-sact="probe-close">${icon('x')}</button></div>
       <p class="pc-thanks">${icon('check')}Thanks. Your twin drafted this into <b>Your twin’s drafts</b> for you to check before anyone sees it.</p>
       <button class="link sm" data-sact="to-drafts">Open Your Home ${icon('arrow')}</button></div>`;
     return `<div class="probe-card glass">
-      <div class="pc-head">${App.synth()}<b>Nova asks</b><span class="mut">about a key moment</span><button class="gx" data-sact="probe-later" title="Save for later">${icon('x')}</button></div>
+      <div class="pc-head"><b>Techne · asking as a new grad</b>${App.synth()}<button class="gx" data-sact="probe-later" title="Save for later">${icon('x')}</button></div>
       <p class="pc-q">${P.q}</p>
       <span class="chip">${icon('terminal')}${P.at}</span>
       <textarea id="probe-a" rows="2" placeholder="A sentence is enough"></textarea>
@@ -69,13 +69,13 @@ const SeniorPages = (() => {
     const Q = DATA.interview;
     const done = qIndex >= Q.length;
     const msgs = Q.slice(0, Math.min(qIndex + 1, Q.length)).map((q, i) => `
-      <div class="msg ai"><div class="who">${App.synth()}Nova</div><div class="abody"><p>${q.q}</p></div></div>
+      <div class="msg ai"><div class="who">Techne ${App.synth()}</div><div class="abody"><p>${q.q}</p></div></div>
       ${i < qIndex ? `<div class="msg me"><div class="bubble">${q.answer || q.sample}</div></div>` : ''}`).join('');
     return `<div class="modal-wrap iv-wrap"><div class="modal interview" role="dialog" aria-label="End-of-day interview">
-      <div class="m-head"><div><span class="m-trig">${App.synth()}End-of-day interview · about 5 min</span><h2>Nova has ${Q.length} questions about today</h2></div><button class="gx" data-sact="iv-close" title="Finish later">${icon('x')}</button></div>
+      <div class="m-head"><div><span class="m-trig">${App.synth()}End-of-day interview · about 5 min</span><h2>Techne has ${Q.length} questions about today</h2></div><button class="gx" data-sact="iv-close" title="Finish later">${icon('x')}</button></div>
       <div class="iv-prog">${Q.map((_, i) => `<i class="${i < qIndex ? 'done' : i === qIndex ? 'on' : ''}"></i>`).join('')}<span>${done ? 'Done' : `Question ${qIndex + 1} of ${Q.length}`}</span></div>
       <div class="iv-thread" id="iv-thread">${msgs}
-        ${done ? `<div class="msg ai"><div class="who">${App.synth()}Nova</div><div class="abody"><p>Thanks, that’s all. Your twin drafted <b>“${DATA.interviewDraft.title}”</b> from your answers. It’s in Your twin’s drafts to check before it’s published.</p></div></div>` : ''}
+        ${done ? `<div class="msg ai"><div class="who">Techne ${App.synth()}</div><div class="abody"><p>Thanks, that’s all. Your twin drafted <b>“${DATA.interviewDraft.title}”</b> from your answers. It’s in Your twin’s drafts to check before it’s published.</p></div></div>` : ''}
       </div>
       ${done ? `<div class="m-foot"><span class="mut">${icon('shield')}Your answers stay in your twin until you approve them.</span><button class="btn primary" data-sact="iv-review">Review the draft ${icon('arrow')}</button></div>`
         : `<div class="m-foot iv-input"><textarea id="iv-a" rows="2" placeholder="Answer in a sentence or two"></textarea>
@@ -93,7 +93,7 @@ const SeniorPages = (() => {
   }).join('');
   function hotHTML() {
     return `<div class="page hot">
-      <div class="hello"><h1>Hot spots</h1><p>Where new grads’ questions cluster this month. Gaps shape what Nova asks seniors next.</p>
+      <div class="hello"><h1>Hot spots</h1><p>Where new grads’ questions cluster this month. Gaps shape what Techne asks seniors next.</p>
         <div class="stats">
           <div><span>Questions this month</span><b>${DATA.hotspots.reduce((a, h) => a + h.n, 0)}</b></div>
           <div><span>Covered by a twin</span><b><i class="dot" style="background:var(--green)"></i>${DATA.hotspots.filter(h => h.cover === 'covered').length} of ${DATA.hotspots.length}</b></div>
@@ -112,7 +112,7 @@ const SeniorPages = (() => {
         </div>
         <div class="card nova-card">
           <div class="chead"><span class="ctitle">Upcoming interviews</span>${App.synth()}</div>
-          <p class="csub">Nova interviews seniors about gaps, 5 minutes at the end of their day.</p>
+          <p class="csub">Techne interviews seniors about gaps, 5 minutes at the end of their day.</p>
           <ul class="ivs">${DATA.interviewsPlanned.map(([who, topic, when]) => `<li><span class="avatar sm light">${who[0]}</span><div><b>${topic}</b><span>with ${who} · ${when}</span></div></li>`).join('')}</ul>
           ${builtFrom()}
         </div>
@@ -151,7 +151,7 @@ const SeniorPages = (() => {
       case 'probe-answer':
         if (!$('#probe-a').value.trim()) { $('#probe-a').focus(); return; }
         probeState = 'answered'; Senior.addInterviewDraft(); rerender('ide'); break;
-      case 'probe-later': probeState = 'later'; App.toast(`${icon('clock')}Saved for tonight’s interview with Nova.`); rerender('ide'); break;
+      case 'probe-later': probeState = 'later'; App.toast(`${icon('clock')}Saved for tonight’s interview.`); rerender('ide'); break;
       case 'probe-close': probeState = 'later'; rerender('ide'); break;
       case 'to-drafts': App.set({ screen: 'home' }); break;
       case 'interview': qIndex = Math.min(qIndex, DATA.interview.length); openInterview(); break;
@@ -159,7 +159,7 @@ const SeniorPages = (() => {
       case 'iv-send': case 'iv-skip': {
         const a = $('#iv-a')?.value.trim();
         if (act === 'iv-send' && !a) { $('#iv-a').focus(); return; }
-        DATA.interview[qIndex].answer = act === 'iv-skip' ? '(Skipped. Nova will ask another day.)' : a;
+        DATA.interview[qIndex].answer = act === 'iv-skip' ? '(Skipped. Techne will ask another day.)' : a;
         qIndex++;
         openInterview();
         break;

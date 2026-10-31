@@ -17,7 +17,7 @@ const Senior = (() => {
   const DRAFT_KIND = {
     session: ['video', () => 'From your session'],
     sent: ['send', d => `Sent to you · ${d.askedBy} asked`],
-    interview: ['twin', () => 'From your interview with Nova'],
+    interview: ['twin', () => 'From your interview with Techne'],
   };
   const QUEUE_KIND = {
     workaround: ['flag', 'Workaround to check'],
@@ -127,7 +127,7 @@ const Senior = (() => {
               <div><div class="hm-months" id="hm-months"></div><div class="hm" id="hm"></div></div></div>
           </div>
           <div class="impact-pie"><div class="pie-svg">${pieSVG(EXPERTISE, 120)}</div><ul class="pie-legend">${legend(EXPERTISE)}</ul></div>
-          <div class="cstats"><div><b>128</b><span>docs you approved</span></div><div><b>41</b><span>new grads helped</span></div><div><b>12</b><span>interviews with Nova</span></div><div><b id="hm-total"></b><span>contributions</span></div></div>
+          <div class="cstats"><div><b>128</b><span>docs you approved</span></div><div><b>41</b><span>new grads helped</span></div><div><b>12</b><span>interviews with Techne</span></div><div><b id="hm-total"></b><span>contributions</span></div></div>
         </div>
       </details>
     </div>`;
@@ -223,7 +223,7 @@ const Senior = (() => {
     { label: 'COBOL', v: 34, fill: 'var(--ink)' }, { label: 'Procurement', v: 31, fill: 'url(#hatch)', sw: 'hatch' },
     { label: 'JCL & batch', v: 22, fill: 'var(--pie-3)' }, { label: 'Onboarding', v: 13, fill: 'var(--pie-4)' },
   ];
-  const FROM = { answer: ['message', 'Drafted answer'], session: ['video', 'From a session'], published: ['user', 'Published by a new grad'], interview: ['twin', 'From an interview with Nova'] };
+  const FROM = { answer: ['message', 'Drafted answer'], session: ['video', 'From a session'], published: ['user', 'Published by a new grad'], interview: ['twin', 'From an interview with Techne'] };
   function repoHTML() {
     return `<div class="page repo ${repoSel ? 'has-sel' : ''}">
       <aside class="repo-side">
@@ -265,11 +265,11 @@ const Senior = (() => {
     if (!d) { el.innerHTML = ''; return; }
     const [fi, fl] = FROM[d.from];
     const hist = [[`v${d.versions}`, `Checked by ${d.by}`, d.checked], ...(d.versions > 1 ? [[`v${d.versions - 1}`, 'Edited after 3 new grads asked a follow-up', '2 months ago']] : []),
-      ['v1', d.author ? `Published from ${d.author}’s twin` : d.from === 'interview' ? `Drafted from ${d.by}’s interview with Nova` : d.from === 'session' ? `Drafted from ${d.by}’s recorded session` : 'Drafted by Senior Techne from a new grad’s question', 'first version']];
+      ['v1', d.author ? `Published from ${d.author}’s twin` : d.from === 'interview' ? `Drafted from ${d.by}’s interview with Techne` : d.from === 'session' ? `Drafted from ${d.by}’s recorded session` : 'Drafted by Senior Techne from a new grad’s question', 'first version']];
     el.innerHTML = `<div class="pv-top"><span class="topic">${d.topic}</span><button class="gx" data-act="doc-close">${icon('x')}</button></div>
       <h2>${d.title}</h2><div class="pv-meta"><span>${icon(fi)}${fl}</span><span>${icon('eye')}Used ${d.used} times</span></div>
       <p class="pv-sum">${d.summary}</p>
-      ${d.stale ? `<div class="pv-stale">${icon('clock')}<span>Not checked in 4 months. Nova will ask ${d.by} about it on Monday.</span></div>` : ''}
+      ${d.stale ? `<div class="pv-stale">${icon('clock')}<span>Not checked in 4 months. Techne will ask ${d.by} about it on Monday.</span></div>` : ''}
       <div class="slabel">History</div><ol class="hist">${hist.map(([v, t, w]) => `<li><span class="hv">${v}</span><div><b>${t}</b><span>${w}</span></div></li>`).join('')}</ol>
       <div class="pv-acts"><button class="btn dark">${icon('edit')}Suggest an edit</button><button class="btn ghost">${icon('flag')}Mark outdated</button></div>`;
   }
@@ -301,7 +301,7 @@ const Senior = (() => {
       left = `<div class="slabel">What ${d.askedBy.split(' ')[0]} was doing</div>${shot(d.shot)}
         ${d.inferred ? `<div class="infer-box">${icon('alert')}<div><b>Your twin inferred this</b><span>${d.inferred}</span></div></div>` : `<div class="cap">${icon('send')}Senior Techne sent this to you because your twin drafted the answer.</div>`}`;
     } else {
-      left = `<div class="slabel">Your interview with Nova ${App.synth()}</div>
+      left = `<div class="slabel">Your interview with Techne ${App.synth()}</div>
         <ol class="qa">${DATA.interview.map(i => `<li><span class="q">${icon('sparkle')}${i.q}</span><span class="a">${i.sample}</span></li>`).join('')}</ol>
         <div class="cap">${icon('info')}${DATA.persona.note}</div>`;
     }
@@ -483,7 +483,7 @@ const Senior = (() => {
   function start(st) { reset(); show(st.screen); }
   function stop() { timers.forEach(clearTimeout); timers = []; closeSheet(); SeniorPages.stop(); }
   function flag(id) { flagged = id; }
-  // Called when Priya finishes the end-of-day interview with Nova
+  // Called when Priya finishes the end-of-day interview with Techne
   function addInterviewDraft() {
     interviewDone = true;
     if (!drafts.some(d => d.id === DATA.interviewDraft.id)) drafts.unshift({ ...DATA.interviewDraft, status: 'todo', fresh: true });

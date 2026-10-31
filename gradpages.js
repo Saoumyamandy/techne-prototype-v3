@@ -95,7 +95,7 @@ const GradPages = (() => {
         <div class="explain">
           <div>${icon('twin')}<b>Your twin</b><span>Learns from what you save: tasks, walkthroughs, questions. Private until you share.</span></div>
           <div>${icon('sparkle')}<b>Senior Techne</b><span>Routes your questions to the senior whose twin knows the answer, and always tells you whose it is.</span></div>
-          <div>${App.synth()}<b>Nova</b><span>A synthetic new grad that interviews seniors so their twins learn the why. Never a real person.</span></div>
+          <div>${App.synth()}<b>Techne, as a new grad</b><span>When Techne interviews seniors, it asks the questions real new grads ask, so their twins learn the why. Never a real person.</span></div>
         </div>`,
       `<h2>What Techne records</h2><p>You choose. You can change this any time from the sidebar.</p>
         <div class="perm">
