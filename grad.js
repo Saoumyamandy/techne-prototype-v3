@@ -36,7 +36,13 @@ const Grad = (() => {
       return `<span class="c-num">${flag}</span>`;
     });
   }
-  const hl = t => S.lang === 'sh' ? hlSh(t) : hlCobol(t);
+  function hlJcl(l) {
+    if (/^\/\/\*/.test(l)) return `<span class="c-cm">${l}</span>`;
+    return l.replace(/^(\/\/\w*)/, '<span class="c-id">$1</span>')
+      .replace(/\b(JOB|EXEC|DD|PGM|DSN|DISP|CLASS|MSGCLASS|PARM|SHR|OLD)\b/g, '<span class="c-kw">$1</span>')
+      .replace(/('[^']*')/g, '<span class="c-str">$1</span>');
+  }
+  const hl = t => S.lang === 'sh' ? hlSh(t) : S.lang === 'jcl' ? hlJcl(t) : hlCobol(t);
 
   // ── IDE chrome ──
   function renderTree() {
@@ -172,7 +178,7 @@ const Grad = (() => {
     const t = DATA.twins[a.twin];
     const counts = S.steps.reduce((m, s) => (m[s.status] = (m[s.status] || 0) + 1, m), {});
     const badge = a.mixed
-      ? `<span class="vbadge mixed">${counts.verified || 0} verified · ${counts.inferred || 0} inferred</span>`
+      ? `<span class="vbadge ${counts.inferred ? 'mixed' : ''}">${['verified', 'inferred', 'general'].filter(k => counts[k]).map(k => `${counts[k]} ${k}`).join(' · ')}</span>`
       : `<span class="vbadge">${icon('shield')}Verified</span>`;
     return `<div class="verif"><span class="avatar sm">${t.initial}</span><div class="vtext"><b>From ${t.name}’s twin</b><span>${t.role}</span></div>${badge}</div>`;
   }
@@ -273,7 +279,11 @@ const Grad = (() => {
       <button class="pill run-pill" data-act="run">${icon('play')}${S.fix.label}</button></div></div>` : '';
   const noteHTML = s => s.note ? `<div class="gnote">${icon('info')}<span>${s.note}</span></div>` : '';
   const sentHTML = s => s.sentTo ? `<div class="sent-to">${icon('send')}Sent to ${App.twinName(s.sentTo)} to confirm. You can still use it.</div>` : '';
-  const whereHTML = s => `<details class="where"><summary>${icon('info')}Where this comes from</summary><p>${s.source}</p></details>`;
+  // A step with a trail shows where the knowledge came from, end to end; others keep a one-line source
+  const whereHTML = s => s.trail
+    ? `<details class="where"><summary>${icon('info')}Where this comes from</summary><ol class="trail">${s.trail.map(([when, ic, what, sub]) =>
+        `<li><span class="tr-dot">${icon(ic)}</span><div>${when ? `<span class="tr-when">${when}</span>` : ''}<b>${what}</b>${sub ? `<span class="tr-sub">${sub}</span>` : ''}</div></li>`).join('')}</ol></details>`
+    : `<details class="where"><summary>${icon('info')}Where this comes from</summary><p>${s.source}</p></details>`;
 
   // Glass and Both: the step floats as a glass card pinned to the code
   function showGlassStep(i) {
@@ -350,7 +360,7 @@ const Grad = (() => {
         <button class="chip add" data-act="add-ctx">${icon('plus')}Add context</button>
       </div>
       <div class="sp-thread" id="sp-thread">
-        <div class="msg me"><div class="bubble">${S.error ? `My <code>${S.run.split(' ')[0]}</code> failed with <code>${S.short}</code>. What’s going on?` : `I’m on ${S.ticket}: include PDF invoices in the nightly vendor file copy. Where do I start?`}</div></div>
+        <div class="msg me"><div class="bubble">${S.ask ? S.ask : S.error ? `My <code>${S.run.split(' ')[0]}</code> failed with <code>${S.short}</code>. What’s going on?` : `I’m on ${S.ticket}: include PDF invoices in the nightly vendor file copy. Where do I start?`}</div></div>
         <div class="msg ai" id="sp-answer"><div class="who">${icon('sparkle')}Senior Techne</div><div class="abody"></div></div>
       </div>
       <div class="sp-sugg">${(S.error ? ['Why does this happen?', 'What if it fails again?', 'Who else hit this?'] : ['What could break?', 'Who owns this job?', 'How do I test it?']).map(q => `<button type="button" data-act="sugg">${q}</button>`).join('')}</div>
@@ -402,6 +412,7 @@ const Grad = (() => {
           <div class="gbtns">${k > 0 ? '<button class="btn ghost" data-act="back">Back</button>' : ''}
           ${k < S.steps.length - 1 ? `<button class="btn dark" data-act="next">Next ${icon('arrow')}</button>` : ''}</div></div>` : ''}
       </li>`).join('');
+    $('#psteps .pstep.on')?.scrollIntoView({ block: 'nearest' });
   }
   function renderProgress() {
     const el = $('#pprog');
@@ -690,6 +701,8 @@ const Grad = (() => {
       if (b && root.contains(b) && !gpage.contains(b)) onAct(b.dataset.act, b);
     });
     modal.addEventListener('click', e => { if (e.target === modal) modal.hidden = true; });
+    // an opened "Where this comes from" scrolls fully into view, so the trail is never below the fold
+    root.addEventListener('toggle', e => { if (e.target.matches?.('details.where') && e.target.open) e.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, true);
     wireDivider();
   }
 
@@ -709,7 +722,7 @@ const Grad = (() => {
     sp.hidden = true; divider.hidden = true; sp.innerHTML = '';
     modal.hidden = true;
     ['#help-term', '#help-corner'].forEach(s => $(s).className = $(s).className.replace(/\b(nudge|ready|away)\b/g, '').trim());
-    $('#term-right').textContent = S.error ? 'zsh · procurement-core' : 'zsh · proc-512-pdf-invoices';
+    $('#term-right').textContent = S.key === 'filecopy' ? 'zsh · proc-512-pdf-invoices' : 'zsh · procurement-core';
     renderTree(); renderTabs(); renderEditor();
     termBody.innerHTML = '';
     $('#problems').hidden = true;

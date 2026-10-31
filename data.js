@@ -16,6 +16,21 @@ const DATA = (() => {
     note: 'When Techne interviews seniors, it asks as a synthetic new grad: the questions real new grads ask, so seniors’ twins learn the why.',
   };
 
+  // Priya's three steps on restarting VENDSYNC. Her draft and Maya's walkthrough share them word for word.
+  const restartSteps = [
+    ['Restart from step 3, not from the top', 'Run <code>restart VENDSYNC --from=STEP03</code>, so the job picks up at the step that failed.'],
+    ['Why: steps 1 and 2 already committed', 'Steps 1 and 2 already committed to VENDMAST. Rerunning them inserts duplicate vendor rows.'],
+    ['Check the record count matches before closing out', 'The count should be within 1% of yesterday’s. More than that means a partial load, so hold the PO batch.'],
+  ];
+
+  // The capture trail behind Priya's steps: session → answer → approval → use
+  const restartTrail = [
+    ['Oct 30, 4:18 PM', 'video', 'Priya restarted VENDSYNC from step 3', 'Her recorded session'],
+    ['Oct 30, 5:02 PM', 'twin', 'Priya answered Techne: “Steps 1 and 2 already committed…”', 'Techne asked as a new grad'],
+    ['Oct 31', 'check', 'Priya reviewed and approved', 'Now in her twin and the team docs'],
+    ['', 'users', 'Used 3 times since · 3 of 3 said it helped', ''],
+  ];
+
   const tree = [
     { name: 'procurement-core', dir: true, depth: 0 },
     { name: 'src', dir: true, depth: 1 },
@@ -27,7 +42,8 @@ const DATA = (() => {
     { name: 'po_small.dat', depth: 2 },
     { name: 'scripts', dir: true, depth: 1 },
     { name: 'vendor_copy.sh', depth: 2 },
-    { name: 'jcl', dir: true, depth: 1, closed: true },
+    { name: 'jcl', dir: true, depth: 1 },
+    { name: 'VENDSYNC.jcl', depth: 2 },
     { name: 'build.sh', depth: 1 },
     { name: 'run.sh', depth: 1 },
   ];
@@ -305,7 +321,67 @@ const DATA = (() => {
     reply: { twin: null, status: 'unknown', text: 'No twin knows whether PDFs need a virus scan before they reach the share. I’ve sent that to the Question Queue for any senior to answer.' },
   };
 
-  for (const s of [checked, unchecked, filecopy]) {
+
+  // ── Scenario 4: the failure Priya fixed, a week later. 3 steps from her twin with a trail back to her session. ──
+  const restart = {
+    key: 'restart', lang: 'jcl', error: true, file: 'VENDSYNC.jcl',
+    tabs: [['VENDSYNC.jcl', 'jcl'], ['Vendor sync recovery', 'runbook'], ['run.sh', 'scripts']],
+    code: [
+      '//VENDSYNC JOB (PROC),\'VENDOR SYNC\',CLASS=A,MSGCLASS=X',
+      '//*  Nightly vendor sync. 5 steps. Steps 1-2 commit to VENDMAST.',
+      '//STEP01   EXEC PGM=VSLOAD',
+      '//VENDIN   DD DSN=PROD.VENDOR.INBOUND,DISP=SHR',
+      '//STEP02   EXEC PGM=VSMERGE',
+      '//VENDMAST DD DSN=PROD.VENDMAST,DISP=OLD',
+      '//STEP03   EXEC PGM=VSINDEX',
+      '//STEP04   EXEC PGM=VSVERIFY',
+      '//STEP05   EXEC PGM=VSNOTIFY,PARM=\'#proc-ops\'',
+    ],
+    marks: { 't-err': '//STEP03   EXEC PGM=VSINDEX', 'm-commit': 'Steps 1-2 commit to VENDMAST.' },
+    run: 'submit VENDSYNC',
+    fail: () => [
+      ['mut', '→ VENDSYNC submitted · JOB04417'],
+      ['', 'STEP01 VSLOAD    <span class="ok">RC=0</span>'],
+      ['', 'STEP02 VSMERGE   <span class="ok">RC=0</span>'],
+      ['', 'STEP03 VSINDEX   <span class="err-t">SQLCODE -911</span> · lock timeout'],
+      ['', '<span class="err-t">✗ VENDSYNC failed at STEP03</span> <span class="mut">· steps 1–2 committed</span>'],
+    ],
+    short: 'VENDSYNC failed at STEP03 · SQLCODE -911',
+    ask: 'VENDSYNC failed at step 3 with <code>SQLCODE -911</code>. What do I do?',
+    answer: {
+      title: 'VENDSYNC failed at step 3 (SQLCODE -911)', twin: 'priya', verified: true, mixed: true, minutes: 2,
+      note: 'Three steps come from Priya R.’s twin, verified by her. One is general knowledge.',
+      sources: ['Priya R.’s session · Oct 30', 'Priya R.’s answer to Techne · Oct 30', 'Runbook: Vendor sync recovery'],
+    },
+    steps: [
+      {
+        target: '#t-err', spot: ['#t-err'], place: 'editor', twin: null, status: 'general',
+        source: 'General DB2 knowledge. Any coding assistant could tell you this part.',
+        title: 'What -911 means here',
+        body: 'SQLCODE -911 is a lock timeout: another job held VENDMAST too long. Here that’s usually the 4 PM reporting job.',
+      },
+      { target: '#t-err', spot: ['#t-err'], place: 'editor', twin: 'priya', status: 'verified', title: restartSteps[0][0], body: restartSteps[0][1], trail: restartTrail },
+      { target: '#m-commit', spot: ['#m-commit'], place: 'editor', twin: 'priya', status: 'verified', title: restartSteps[1][0], body: restartSteps[1][1], trail: restartTrail },
+      {
+        target: '#t-prompt .pwrap', spot: ['#t-prompt .pwrap'], place: 'term', twin: 'priya', status: 'verified', title: restartSteps[2][0], body: restartSteps[2][1], trail: restartTrail,
+        code: 'restart VENDSYNC --from=STEP03\nverify VENDMAST --count --against=yesterday',
+      },
+    ],
+    fix: {
+      kind: 'shell', label: 'Run in terminal',
+      cmds: ['restart VENDSYNC --from=STEP03', 'verify VENDMAST --count --against=yesterday'],
+      out: [
+        ['', 'STEP03 VSINDEX   <span class="ok">RC=0</span>'],
+        ['', 'STEP04 VSVERIFY  <span class="ok">RC=0</span>'],
+        ['', 'STEP05 VSNOTIFY  <span class="ok">RC=0</span> · #proc-ops notified'],
+        ['', '18,402 records · yesterday 18,377 · <span class="ok">within 1%</span>'],
+      ],
+    },
+    done: { title: 'VENDSYNC finished', sub: 'Restarted from step 3. The count is within 1% of yesterday’s.', kind: 'helped' },
+    reply: { twin: 'priya', status: 'verified', text: 'If step 3 times out again, it’s almost always the 4 PM reporting job. Ask #proc-ops to hold it, then restart from step 3.' },
+  };
+
+  for (const s of [checked, unchecked, filecopy, restart]) {
     s.lineOf = id => s.code.findIndex(l => l.includes(s.marks[id])) + 1;
     s.errLine = s.marks['t-err'] ? s.lineOf('t-err') : 0;
   }
@@ -338,13 +414,6 @@ const DATA = (() => {
       term: ['% ./scripts/vendor_copy.sh --dry-run', 'would copy 12 INV*.pdf files → invoices_pdf/', '✓ dry run ok'],
     },
   };
-
-  // Priya's three steps on restarting VENDSYNC. Her draft and Maya's walkthrough share them word for word.
-  const restartSteps = [
-    ['Restart from step 3, not from the top', 'Run <code>restart VENDSYNC --from=STEP03</code>, so the job picks up at the step that failed.'],
-    ['Why: steps 1 and 2 already committed', 'Steps 1 and 2 already committed to VENDMAST. Rerunning them inserts duplicate vendor rows.'],
-    ['Check the record count matches before closing out', 'The count should be within 1% of yesterday’s. More than that means a partial load, so hold the PO batch.'],
-  ];
 
   // Your twin's drafts: Priya's own. Delegated to her, never locked.
   const drafts = [
@@ -568,5 +637,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
 })();

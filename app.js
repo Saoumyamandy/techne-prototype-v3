@@ -108,7 +108,7 @@ const App = (() => {
     'senior-ide': { role: 'senior', screen: 'ide' }, hotspots: { role: 'senior', screen: 'hot' },
     archive: { role: 'grad', screen: 'archive' }, learning: { role: 'grad', screen: 'learn' },
     onboarding: { role: 'grad', screen: 'onboard' }, save: { role: 'grad', screen: 'save' },
-    filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, mobile: { role: 'mobile', screen: 'approvals' },
+    filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' }, mobile: { role: 'mobile', screen: 'approvals' },
   };
   function hostTheme() {
     const t = document.documentElement.dataset.theme;
@@ -172,7 +172,7 @@ const App = (() => {
       <label class="pb-field">Screen<select id="pb-screen">${screens}</select></label>
       ${state.role === 'grad' && (state.screen === 'ide' || state.screen === 'save') ? `
         <span class="pb-sep"></span>
-        <span class="pb-label">Scenario</span>${seg('sc', [['checked', 'Covered'], ['unchecked', 'Not covered'], ['filecopy', 'File copy']])}
+        <span class="pb-label">Scenario</span>${seg('sc', [['checked', 'Covered'], ['unchecked', 'Not covered'], ['filecopy', 'File copy'], ['restart', 'Restart after failure']])}
         <span class="pb-label">Walkthrough</span>${seg('wt', [['split', 'Split'], ['glass', 'Glass'], ['both', 'Both']])}
         <span class="pb-label">Help</span>${seg('help', [['terminal', 'Terminal'], ['corner', 'Corner']])}` : ''}
       <span class="pb-right">

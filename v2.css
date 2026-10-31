@@ -619,3 +619,16 @@
 .moment-card b{display:block;font-size:13px;font-weight:600}
 .moment-card code{display:inline-block;margin:6px 0;font-size:11.5px;background:#111;color:#E6E6E1;padding:3px 7px;border-radius:5px}
 .moment-card span{display:block;font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+
+/* capture trail behind a step */
+.trail{list-style:none;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);display:flex;flex-direction:column;gap:0;position:relative}
+.trail li{display:flex;gap:10px;position:relative;padding-bottom:12px}
+.trail li:last-child{padding-bottom:0}
+.trail li:not(:last-child)::before{content:"";position:absolute;left:11px;top:24px;bottom:2px;width:1.5px;background:var(--line)}
+.tr-dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--guide-soft);color:var(--guide);flex:none}
+.tr-dot .ic{width:12px;height:12px}
+.trail li:last-child .tr-dot{background:var(--green-soft);color:var(--green-ink)}
+.trail li > div{display:flex;flex-direction:column;gap:1px;padding-top:2px;min-width:0}
+.tr-when{font-size:10.5px;font-family:var(--mono);color:var(--muted)}
+.trail b{font-size:12.5px;font-weight:500;color:var(--ink);line-height:1.4}
+.tr-sub{font-size:11.5px;color:var(--muted)}
