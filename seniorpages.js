@@ -85,8 +85,8 @@ const SeniorPages = (() => {
       <span class="chip">${icon('terminal')}${P.at}</span>
       ${whyHTML(P.lineage)}
       ${rateHTML()}
-      <textarea id="probe-a" rows="2" placeholder="A sentence is enough"></textarea>
-      <div class="pc-acts"><button class="chip add" data-sact="probe-sample">Use a sample answer</button><button class="btn ghost sm" data-sact="probe-later">Ask me tonight</button><button class="btn primary sm" data-sact="probe-answer">Answer</button></div>
+      <textarea id="probe-a" rows="2" placeholder="A sentence is enough" data-script="probe"></textarea>
+      <div class="pc-acts"><button class="btn ghost sm" data-sact="probe-later">Ask me tonight</button><button class="btn primary sm" data-sact="probe-answer">Answer</button></div>
     </div>`;
   }
 
@@ -127,8 +127,8 @@ const SeniorPages = (() => {
         ${done ? `<div class="msg ai"><div class="who">Techne ${App.synth()}</div><div class="abody"><p>Thanks, that’s all. Your twin drafted <b>“${DATA.interviewDraft.title}”</b> from your answers. It’s in Your twin’s drafts to check before it’s published.</p></div></div>` : ''}
       </div>
       ${done ? `<div class="m-foot"><span class="mut">${icon('shield')}Your answers stay in your twin until you approve them.</span><button class="btn primary" data-sact="iv-review">Review the draft ${icon('arrow')}</button></div>`
-        : `<div class="m-foot iv-input"><textarea id="iv-a" rows="2" placeholder="Answer in a sentence or two"></textarea>
-          <div class="iv-row"><button class="chip add" data-sact="iv-sample">Use a sample answer</button><button class="chip" data-sact="iv-skip">Skip this one</button><button class="btn primary" data-sact="iv-send">${icon('send')}Send</button></div></div>`}
+        : `<div class="m-foot iv-input"><textarea id="iv-a" rows="2" placeholder="Answer in a sentence or two" data-script="iv"></textarea>
+          <div class="iv-row"><button class="chip" data-sact="iv-skip">Skip this one</button><button class="btn primary" data-sact="iv-send">${icon('send')}Send</button></div></div>`}
     </div></div>`;
   }
 
@@ -198,8 +198,8 @@ const SeniorPages = (() => {
         App.toast(recording ? `${icon('record')}Recording again.` : `${icon('pause')}Recording paused. Nothing is captured until you resume.`);
         rerender('ide');
         break;
-      case 'probe-sample': $('#probe-a').value = DATA.seniorIde.probe.answer; break;
       case 'probe-answer':
+        finishTyping($('#probe-a'));
         if (!$('#probe-a').value.trim()) { $('#probe-a').focus(); return; }
         DATA.interview.find(q => q.moment === DATA.seniorIde.probe.moment).given = $('#probe-a').value.trim();
         probeState = 'answered'; Senior.addInterviewDraft(); rerender('ide'); break;
@@ -207,10 +207,10 @@ const SeniorPages = (() => {
       case 'probe-close': probeState = 'later'; rerender('ide'); break;
       case 'to-drafts': App.set({ screen: 'home' }); break;
       case 'interview': skipAnswered(); openInterview(); break;
-      case 'iv-sample': $('#iv-a').value = DATA.interview[qIndex].answer; break;
       case 'rate-up': App.toast(`${icon('check')}Thanks. Techne will ask more questions like this.`); el.closest('.rate').classList.add('done'); break;
       case 'rate-down': App.toast(`${icon('x')}Got it. Techne will ask fewer questions like this.`); el.closest('.rate').classList.add('done'); break;
       case 'iv-send': case 'iv-skip': {
+        if (act === 'iv-send') finishTyping($('#iv-a'));
         const a = $('#iv-a')?.value.trim();
         if (act === 'iv-send' && !a) { $('#iv-a').focus(); return; }
         DATA.interview[qIndex].given = act === 'iv-skip' ? '(Skipped. Techne will ask another day.)' : a;
@@ -224,12 +224,47 @@ const SeniorPages = (() => {
     }
   }
 
+  // Answer fields type out the scripted answer, whatever keys are pressed, so a live walkthrough never stalls on typing
+  const scriptFor = el => el.dataset.script === 'probe' ? DATA.seniorIde.probe.answer : DATA.interview[qIndex]?.answer || '';
+  let typing = null;
+  function startTyping(el) {
+    if (el.dataset.typed || typing) return;
+    const text = scriptFor(el);
+    el.value = '';
+    let i = 0;
+    const step = () => {
+      el.value = text.slice(0, ++i);
+      el.scrollTop = el.scrollHeight;
+      if (i < text.length) typing = setTimeout(step, 18 + Math.random() * 26);
+      else { typing = null; el.dataset.typed = '1'; }
+    };
+    step();
+  }
+  function finishTyping(el) {
+    if (!el) return;
+    if (typing || !el.dataset.typed && el.value) { clearTimeout(typing); typing = null; el.value = scriptFor(el); el.dataset.typed = '1'; }
+  }
+  document.addEventListener('keydown', e => {
+    const el = e.target.closest?.('textarea[data-script]');
+    if (!el || e.metaKey || e.ctrlKey || ['Tab', 'Shift', 'Alt', 'Meta', 'Control', 'CapsLock', 'Escape'].includes(e.key)) return;
+    e.preventDefault();
+    if (e.key === 'Enter' && el.dataset.typed) { host.querySelector(el.dataset.script === 'probe' ? '[data-sact="probe-answer"]' : '[data-sact="iv-send"]')?.click(); return; }
+    startTyping(el);
+  }, true);
+  // paste, dictation and IME also produce the scripted answer
+  document.addEventListener('beforeinput', e => {
+    const el = e.target.closest?.('textarea[data-script]');
+    if (!el) return;
+    e.preventDefault();
+    startTyping(el);
+  }, true);
+
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-sact]');
     if (b && host?.contains(b)) onAct(b.dataset.sact, b);
   });
 
   function stop() { timers.forEach(clearTimeout); timers = []; }
-  function reset() { stop(); recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
+  function reset() { stop(); clearTimeout(typing); typing = null; recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
   return { render, stop, reset };
 })();
