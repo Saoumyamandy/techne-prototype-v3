@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Techne v2</title>
+<title>Techne</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -91,25 +91,37 @@
 
   <!-- ───────────── SENIOR ───────────── -->
   <section class="screen senior" id="senior" hidden>
-    <header class="dash-bar">
-      <div class="brand">Techne <em>Senior</em></div>
-      <nav class="dtabs" id="dtabs">
-        <button class="dtab" data-screen="home">Your Home <b id="home-count">3</b></button>
-        <button class="dtab" data-screen="queue">Question Queue <b id="queue-count">5</b></button>
-        <button class="dtab" data-screen="repo">Company repository</button>
-        <button class="dtab" data-screen="ide">Your IDE</button>
-        <button class="dtab" data-screen="hot">Hot spots</button>
-        <button class="dtab" data-screen="report">Your year</button>
+    <aside class="snav">
+      <div class="ws"><span class="ws-logo">T</span><b>Techne</b><span class="ws-org">Procurement</span><i data-icon="chev-down"></i></div>
+      <nav class="snav-nav" id="dtabs">
+        <div class="snav-g">
+          <span class="snav-l"><i data-icon="twin"></i>Your work</span>
+          <button class="dtab" data-screen="home"><i data-icon="home"></i><span>Your Home</span><b id="home-count">3</b></button>
+          <button class="dtab" data-screen="queue"><i data-icon="inbox"></i><span>Question Queue</span><b id="queue-count">5</b></button>
+          <button class="dtab" data-screen="ide"><i data-icon="code"></i><span>Your IDE</span></button>
+        </div>
+        <div class="snav-g">
+          <span class="snav-l"><i data-icon="book"></i>Knowledge</span>
+          <button class="dtab" data-screen="repo"><i data-icon="layers"></i><span>Company repository</span></button>
+          <button class="dtab" data-screen="hot"><i data-icon="flame"></i><span>Hot spots</span></button>
+          <button class="dtab" data-screen="persona"><i data-icon="sparkle"></i><span>How Techne asks</span></button>
+        </div>
+        <div class="snav-g">
+          <span class="snav-l"><i data-icon="user"></i>You</span>
+          <button class="dtab" data-screen="report"><i data-icon="report"></i><span>Your year</span></button>
+        </div>
       </nav>
-      <div class="dash-right">
+      <div class="snav-foot">
         <span class="credits" id="credits-pill" data-tip="Earn credits by contributing: reviewing, writing and fixing team docs">
           <i data-icon="coin"></i><b id="credits">1,240</b><span>credits</span><em id="credits-plus">+15</em>
         </span>
-        <span class="avatar">P</span>
+        <div class="me"><span class="avatar">P</span><div><b>Priya R.</b><span>Senior · COBOL and procurement</span></div></div>
       </div>
-    </header>
-    <div class="dash-body" id="dash-body"></div>
-    <div class="sheet-wrap" id="sheet-wrap" hidden></div>
+    </aside>
+    <div class="smain">
+      <div class="dash-body" id="dash-body"></div>
+      <div class="sheet-wrap" id="sheet-wrap" hidden></div>
+    </div>
   </section>
 
   <!-- ───────────── MOBILE ───────────── -->
@@ -117,8 +129,8 @@
 </main>
 
 <div class="narrow">
-  <div class="brand">Techne <em>prototype</em></div>
-  <p>This is a desktop prototype of an IDE and a dashboard, so it needs a laptop-sized window. Open this link on a computer, or widen the window.</p>
+  <div class="brand">Techne</div>
+  <p>Techne is an IDE and a dashboard, so it needs a laptop-sized window. Open this link on a computer, or widen the window.</p>
 </div>
 
 <div class="toast" id="toast"></div>

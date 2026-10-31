@@ -97,6 +97,12 @@ const Senior = (() => {
       <div class="hello">
         <h1>Your Home</h1>
         <p class="needs">${nd || nq ? `Needs you first: ${nd ? `<button class="needs-l" data-act="to-drafts"><b>${nd} draft${nd > 1 ? 's' : ''} from your work</b></button>` : ''}${nd && nq ? ' and ' : ''}${nq ? `<button class="needs-l" data-act="to-queue"><b>${nq} open question${nq > 1 ? 's' : ''}</b> in the Question Queue</button>` : ''}` : 'You’re all caught up.'}</p>
+        <div class="stats">
+          <div><span>Drafts to review</span><b><i class="dot"></i>${nd}</b></div>
+          <div><span>Open questions</span><b><i class="dot warn"></i>${nq}</b></div>
+          <div><span>Answers from your twin</span><b>63 <small>this month</small></b></div>
+          <div><span>New grads helped</span><b>41</b></div>
+        </div>
       </div>
       <div class="home-grid">
         <div class="card drafts" id="drafts-card">
@@ -437,6 +443,7 @@ const Senior = (() => {
   function show(scr) {
     screen = scr;
     closeSheet();
+    $('#senior').dataset.screen = scr;
     document.querySelectorAll('.dtab').forEach(t => t.classList.toggle('on', t.dataset.screen === scr));
     body.classList.toggle('full', scr === 'ide');
     if (scr === 'home') { body.innerHTML = homeHTML(); heatmap(); renderDrafts(); }

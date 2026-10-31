@@ -353,9 +353,10 @@ const Grad = (() => {
         <div class="msg me"><div class="bubble">${S.error ? `My <code>${S.run.split(' ')[0]}</code> failed with <code>${S.short}</code>. What’s going on?` : `I’m on ${S.ticket}: include PDF invoices in the nightly vendor file copy. Where do I start?`}</div></div>
         <div class="msg ai" id="sp-answer"><div class="who">${icon('sparkle')}Senior Techne</div><div class="abody"></div></div>
       </div>
+      <div class="sp-sugg">${(S.error ? ['Why does this happen?', 'What if it fails again?', 'Who else hit this?'] : ['What could break?', 'Who owns this job?', 'How do I test it?']).map(q => `<button type="button" data-act="sugg">${q}</button>`).join('')}</div>
       <form class="sp-input" id="sp-input">
         <textarea id="sp-q" rows="2" placeholder="Ask a follow-up, or paste a log or link"></textarea>
-        <div class="sp-row"><button type="button" class="gx" data-act="add-ctx" title="Add context">${icon('clip')}</button><span class="mut">Enter to send</span><button type="submit" class="send" aria-label="Send">${icon('arrow-up')}</button></div>
+        <div class="sp-row"><button type="button" class="gx" data-act="add-ctx" title="Add context">${icon('clip')}</button><span class="mut">Enter to send</span><button type="submit" class="send">Send ${icon('arrow-up')}</button></div>
       </form>`;
     const body = sp.querySelector('#sp-answer .abody');
     const reveal = () => {
@@ -598,6 +599,7 @@ const Grad = (() => {
       }
       case 'run': runFix(); break;
       case 'add-ctx': addContext(); break;
+      case 'sugg': $('#sp-q').value = el.textContent; followUp(); break;
       case 'ask': {
         const html = `<div class="sent">
           <div class="ftitle">Sent to the Question Queue</div>

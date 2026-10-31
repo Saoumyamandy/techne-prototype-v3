@@ -86,16 +86,26 @@ const SeniorPages = (() => {
 
   // ── Hot spots ──
   const COVER = { covered: ['st-ok', 'shield', 'Covered'], partial: ['st-warn', 'alert', 'Partly covered'], inferred: ['st-warn', 'alert', 'Inferred, awaiting check'], gap: ['st-bad', 'alert', 'Gap'] };
+  // one square per question this month, coloured by how well a twin covers it
+  const segs = h => Array.from({ length: h.n }, (_, i) => {
+    const c = h.cover === 'covered' ? 'ok' : h.cover === 'gap' ? 'bad' : h.cover === 'partial' ? (i < h.n / 2 ? 'ok' : 'warn') : 'warn';
+    return `<i class="${c}"></i>`;
+  }).join('');
   function hotHTML() {
-    const max = Math.max(...DATA.hotspots.map(h => h.n));
     return `<div class="page hot">
-      <div class="hello"><h1>Hot spots</h1><p>Where new grads’ questions cluster this month. Gaps shape what Nova asks seniors next.</p></div>
+      <div class="hello"><h1>Hot spots</h1><p>Where new grads’ questions cluster this month. Gaps shape what Nova asks seniors next.</p>
+        <div class="stats">
+          <div><span>Questions this month</span><b>${DATA.hotspots.reduce((a, h) => a + h.n, 0)}</b></div>
+          <div><span>Covered by a twin</span><b><i class="dot" style="background:var(--green)"></i>${DATA.hotspots.filter(h => h.cover === 'covered').length} of ${DATA.hotspots.length}</b></div>
+          <div><span>Gaps</span><b><i class="dot" style="background:var(--red)"></i>${DATA.hotspots.filter(h => h.cover === 'gap').length}</b></div>
+        </div></div>
       <div class="hot-grid">
         <div class="card">
+          <div class="cover-legend"><span><i style="background:var(--green)"></i>Covered</span><span><i style="background:#F0A23B"></i>Partly covered or inferred</span><span><i style="background:var(--red)"></i>Gap</span></div>
           <table class="htable"><thead><tr><th>Topic</th><th>Questions this month</th><th>Trend</th><th>Coverage</th><th>Next</th></tr></thead>
           <tbody>${DATA.hotspots.map(h => { const [cls, ic, lab] = COVER[h.cover]; return `<tr>
             <td><b>${h.topic}</b></td>
-            <td><div class="hbar"><i style="width:${(h.n / max) * 100}%"></i><span>${h.n}</span></div></td>
+            <td><div class="segrow"><span class="segs">${segs(h)}</span><span class="segs-n">${h.n}</span></div></td>
             <td class="trend ${h.trend > 0 ? 'up' : h.trend < 0 ? 'down' : ''}">${h.trend === null ? 'New' : h.trend === 0 ? 'Flat' : `${h.trend > 0 ? '↑' : '↓'} ${Math.abs(h.trend)}%`}</td>
             <td><span class="stag ${cls} mini">${icon(ic)}${lab}${h.twin ? ` · ${App.twinName(h.twin)}` : ''}</span></td>
             <td class="mut">${h.next || '—'}</td></tr>`; }).join('')}</tbody></table>
