@@ -478,6 +478,15 @@ const DATA = (() => {
       ['cmd', 'restart VENDSYNC --from=STEP03'],
       ['', 'STEP03 VSINDEX   <span class="ok">RC=0</span>'],
       ['', 'STEP04 VSVERIFY  <span class="ok">RC=0</span> · 18,402 records'],
+      ['cmd', 'verify VENDMAST --count --against=yesterday'],
+      ['', '18,402 records · yesterday 18,377 · <span class="ok">within 1%</span>'],
+    ],
+    // Today's session, and the moments Techne flagged in it. pos is where the dot sits on the session bar (0-100).
+    session: { label: 'Today’s session', range: '4:02 – 4:51 PM' },
+    moments: [
+      { time: '4:12 PM', line: 0, pos: 20, label: 'Went straight to jobstat', reason: 'You checked which step failed before anything else. New grads usually search Slack first.' },
+      { time: '4:18 PM', line: 2, pos: 33, label: 'Restarted mid-job', reason: 'You skipped steps 1 and 2. New grads usually rerun from the top.', main: true },
+      { time: '4:31 PM', line: 5, pos: 59, label: 'Checked the record count', reason: 'You compared the count with yesterday’s before telling #proc-ops. New grads usually stop at RC=0.' },
     ],
     probe: {
       q: 'You restarted VENDSYNC from step 3, not from the top. Why?',

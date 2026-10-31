@@ -5,7 +5,7 @@ const SeniorPages = (() => {
   const icon = n => App.icon(n);
   let timers = [];
   const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
-  let host = null, recording = true, probeState = 'hidden', qIndex = 0;
+  let host = null, recording = true, probeState = 'hidden', qIndex = 0, momentsOpen = false;
 
   const builtFrom = () => `<details class="built"><summary>${icon('info')}Built from</summary><ul>${DATA.persona.builtFrom.map(b => `<li>${b}</li>`).join('')}</ul><p>${DATA.persona.note}</p></details>`;
 
@@ -25,7 +25,8 @@ const SeniorPages = (() => {
         <ul class="tree">${[['procurement-batch', 1, 0], ['jcl', 1, 1], ['VENDSYNC.jcl', 0, 2, true], ['POBATCH.jcl', 0, 2], ['VSAMREORG.jcl', 0, 2], ['runbooks', 1, 1]].map(([n, dir, d, on]) =>
           `<li class="${dir ? 'dir' : 'file'} ${on ? 'on' : ''}" style="--d:${d}">${dir ? `<i class="chev">${icon('chev-down')}</i>` : ''}${icon(dir ? 'folder' : 'file')}<span>${n}</span></li>`).join('')}</ul>
         <div class="label">Your twin today</div>
-        <ul class="twin-today"><li>${icon('video')}<span>2 sessions recorded</span></li><li>${icon('star')}<span>3 key moments found</span></li><li>${icon('sparkle')}<span>3 questions from Techne</span></li></ul>
+        <ul class="twin-today"><li>${icon('video')}<span>2 sessions recorded</span></li><li><button class="km-btn ${momentsOpen ? 'on' : ''}" data-sact="moments-list">${icon('star')}<span>${I.moments.length} key moments found</span>${icon(momentsOpen ? 'chev-up' : 'chev-down')}</button></li>
+          ${momentsOpen ? `<li class="km-list">${I.moments.map((m, i) => `<button data-sact="moment" data-i="${i}"><span class="tt">${m.time}</span>${m.label}</button>`).join('')}</li>` : ''}<li>${icon('sparkle')}<span>3 questions from Techne</span></li></ul>
         <div class="me"><span class="avatar">P</span><div><b>Priya R.</b><span>Senior · COBOL and procurement</span></div></div>
       </aside>
       <div class="main">
@@ -38,10 +39,20 @@ const SeniorPages = (() => {
             <span class="avatar">P</span>
           </div>
         </header>
+        <div class="sess-strip">
+          <span class="ss-l">${icon('video')}${I.session.label}<em>${I.session.range}</em></span>
+          <div class="ss-bar"><i class="ss-fill"></i>${I.moments.map((m, i) => `<button class="ss-dot ${m.main ? 'is-main' : ''}" style="left:${m.pos}%" data-sact="moment" data-i="${i}" aria-label="Key moment at ${m.time}: ${m.label}"></button>`).join('')}</div>
+          <span class="ss-r">${I.moments.length} key moments</span>
+        </div>
         <div class="body"><div class="work">
           <div class="editor">${I.code.map((l, i) => `<div class="ln ${i === 6 ? 'key' : ''}"><span class="n">${i + 1}</span><span class="lc">${hlJcl(l)}</span></div>`).join('')}</div>
           <div class="term"><div class="term-tabs"><span class="on">${icon('terminal')}Terminal</span><span class="term-right">zsh · procurement-batch</span></div>
-            <div class="term-body">${I.term.map(([k, t]) => k === 'cmd' ? `<div class="tl"><span class="pr">priya@techne</span> <span class="pd">procurement-batch</span> <span class="pc">%</span> ${t}</div>` : `<div class="tl">${t}</div>`).join('')}
+            <div class="term-body">${I.term.map(([k, t], li) => {
+              const mi = I.moments.findIndex(m => m.line === li);
+              const star = mi >= 0 ? `<button class="mstar ${I.moments[mi].main ? 'is-main' : ''}" data-sact="moment" data-i="${mi}" aria-label="Why this is a key moment">${icon('star')}</button>` : '';
+              const body = k === 'cmd' ? `<span class="pr">priya@techne</span> <span class="pd">procurement-batch</span> <span class="pc">%</span> ${t}` : t;
+              return `<div class="tl ${mi >= 0 ? 'moment' : ''} ${mi >= 0 && I.moments[mi].main ? 'is-main' : ''}">${star}${body}</div>`;
+            }).join('')}
             <div class="tl"><span class="pr">priya@techne</span> <span class="pd">procurement-batch</span> <span class="pc">%</span> <span class="caret"></span></div></div></div>
         </div></div>
       </div>
@@ -62,6 +73,26 @@ const SeniorPages = (() => {
       <div class="pc-acts"><button class="chip add" data-sact="probe-sample">Use a sample answer</button><button class="btn ghost sm" data-sact="probe-later">Ask me tonight</button><button class="btn primary sm" data-sact="probe-answer">Answer</button></div>
       ${builtFrom()}
     </div>`;
+  }
+
+  // Small popover explaining why Techne flagged a moment, anchored to whatever was clicked
+  function showMoment(i, anchor) {
+    const m = DATA.seniorIde.moments[i];
+    const ide = host.querySelector('.sp-ide');
+    ide.querySelector('.mpop')?.remove();
+    const pop = document.createElement('div');
+    pop.className = 'mpop';
+    pop.innerHTML = `<div class="mp-head">${icon('star')}<b>Key moment · ${m.time}</b><button class="gx" data-sact="moment-close">${icon('x')}</button></div>
+      <div class="mp-label">${m.label}</div><p>${m.reason}</p>
+      <span class="mp-src">${icon('terminal')}Captured from your terminal</span>`;
+    ide.appendChild(pop);
+    const a = App.rel(anchor, ide), W = ide.clientWidth;
+    const left = Math.min(Math.max(12, a.x + a.w / 2 - 150), W - 312);
+    // open below things near the top (timeline, sidebar), above things near the bottom (terminal)
+    if (a.y < ide.clientHeight / 2) pop.style.top = `${a.y + a.h + 8}px`;
+    else pop.style.bottom = `${ide.clientHeight - a.y + 8}px`;
+    pop.style.left = `${left}px`;
+    ide.querySelectorAll('[data-sact="moment"]').forEach(b => b.classList.toggle('active', +b.dataset.i === i));
   }
 
   // ── End-of-day interview ──
@@ -140,8 +171,11 @@ const SeniorPages = (() => {
     if (th) th.scrollTop = th.scrollHeight;
   }
 
-  function onAct(act) {
+  function onAct(act, el) {
     switch (act) {
+      case 'moment': showMoment(+el.dataset.i, el); break;
+      case 'moment-close': host.querySelector('.mpop')?.remove(); host.querySelectorAll('[data-sact="moment"].active').forEach(b => b.classList.remove('active')); break;
+      case 'moments-list': momentsOpen = !momentsOpen; rerender('ide'); break;
       case 'pause':
         recording = !recording;
         App.toast(recording ? `${icon('record')}Recording again.` : `${icon('pause')}Recording paused. Nothing is captured until you resume.`);
@@ -171,10 +205,10 @@ const SeniorPages = (() => {
 
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-sact]');
-    if (b && host?.contains(b)) onAct(b.dataset.sact);
+    if (b && host?.contains(b)) onAct(b.dataset.sact, b);
   });
 
   function stop() { timers.forEach(clearTimeout); timers = []; }
-  function reset() { stop(); recording = true; probeState = 'hidden'; qIndex = 0; DATA.interview.forEach(q => delete q.answer); }
+  function reset() { stop(); recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.answer); }
   return { render, stop, reset };
 })();
