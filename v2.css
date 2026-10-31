@@ -613,3 +613,9 @@
 .msg.ai .abody .why{margin-top:10px}
 .msg.ai .abody .rate{margin-top:8px}
 .probe-card{max-height:calc(100% - 140px);overflow:auto}
+.k-sessans{background:var(--k-session);color:var(--k-session-i)}
+.moment-card{display:flex;gap:10px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.moment-card > .ic{width:16px;height:16px;color:#E8A317;fill:#E8A317;flex:none;margin-top:1px}
+.moment-card b{display:block;font-size:13px;font-weight:600}
+.moment-card code{display:inline-block;margin:6px 0;font-size:11.5px;background:#111;color:#E6E6E1;padding:3px 7px;border-radius:5px}
+.moment-card span{display:block;font-size:12.5px;line-height:1.5;color:var(--ink-2)}

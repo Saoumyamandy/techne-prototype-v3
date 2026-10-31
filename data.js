@@ -339,26 +339,20 @@ const DATA = (() => {
     },
   };
 
+  // Priya's three steps on restarting VENDSYNC. Her draft and Maya's walkthrough share them word for word.
+  const restartSteps = [
+    ['Restart from step 3, not from the top', 'Run <code>restart VENDSYNC --from=STEP03</code>, so the job picks up at the step that failed.'],
+    ['Why: steps 1 and 2 already committed', 'Steps 1 and 2 already committed to VENDMAST. Rerunning them inserts duplicate vendor rows.'],
+    ['Check the record count matches before closing out', 'The count should be within 1% of yesterday’s. More than that means a partial load, so hold the PO batch.'],
+  ];
+
   // Your twin's drafts: Priya's own. Delegated to her, never locked.
   const drafts = [
     {
-      id: 'd-sess1', kind: 'session', title: 'Rerunning the nightly vendor sync after a partial failure', ago: 'yesterday', topic: 'Procurement',
-      session: {
-        when: 'Yesterday · 4:12 to 4:51 PM · 39 min',
-        moments: [
-          ['4:12', 'terminal', '<code>jobstat VENDSYNC</code> showed step 3 of 5 failed (SQLCODE -911)'],
-          ['4:15', 'doc', 'Opened runbook “Vendor sync recovery”'],
-          ['4:18', 'terminal', '<code>restart VENDSYNC --from=STEP03</code>', true],
-          ['4:31', 'terminal', '<code>verify VENDMAST --count</code> returned 18,402 records'],
-          ['4:44', 'message', 'Told #proc-ops the sync finished late'],
-        ],
-      },
-      steps: [
-        ['Check which step failed', '<code>jobstat VENDSYNC</code> shows the step and SQL code. -911 is a lock timeout, usually caused by the 4 PM reporting job.'],
-        ['Restart from the failed step, not the top', 'Steps 1 and 2 already committed. Rerunning them adds duplicate vendor rows.'],
-        ['Verify, then tell #proc-ops', 'The record count should be within 1% of yesterday’s.'],
-      ],
-      from: ['Your session · yesterday', 'Runbook: Vendor sync recovery'],
+      id: 'd-restart', kind: 'sessans', title: 'Restart VENDSYNC from the failed step', ago: 'today', topic: 'Procurement',
+      moment: 1,
+      steps: restartSteps,
+      from: ['Your session · today, 4:18 PM', 'Your answer to Techne · today'],
     },
     {
       id: 'd-sent1', kind: 'sent', title: 'Confirm: PDF invoices need their own folder', ago: '20m ago', topic: 'Procurement', askedBy: 'Maya Chen', fromScenario: 'filecopy',
@@ -574,5 +568,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, hotspots, interviewsPlanned, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
 })();

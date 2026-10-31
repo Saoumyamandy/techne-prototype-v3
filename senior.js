@@ -17,6 +17,7 @@ const Senior = (() => {
   const DRAFT_KIND = {
     session: ['video', () => 'From your session'],
     sent: ['send', d => `Sent to you · ${d.askedBy} asked`],
+    sessans: ['video', () => 'From your session + your answer'],
     interview: ['twin', () => 'From your interview with Techne'],
   };
   const QUEUE_KIND = {
@@ -28,6 +29,7 @@ const Senior = (() => {
 
   function reset() {
     drafts = DATA.drafts.map(d => ({ ...d, status: 'todo' }));
+    if (restartFresh) Object.assign(drafts.find(x => x.id === 'd-restart'), { fresh: true, ago: 'just now' });
     if (interviewDone) drafts.unshift({ ...DATA.interviewDraft, status: 'todo', fresh: true });
     queue = DATA.queue.map(q => ({ ...q, status: 'todo' }));
     docs = DATA.docs.map(d => ({ ...d }));
@@ -297,6 +299,14 @@ const Senior = (() => {
     if (d.kind === 'session') {
       left = `<div class="slabel">Your recorded session</div><div class="sess-when">${icon('video')}${d.session.when}</div>
         <ol class="timeline">${d.session.moments.map(([t, k, txt, key]) => `<li class="${key ? 'key' : ''}"><span class="tt">${t}</span><span class="tk">${icon(k === 'doc' ? 'book' : k === 'message' ? 'message' : 'terminal')}</span><div>${txt}${key ? `<span class="keytag">${icon('star')}Key moment</span>` : ''}</div></li>`).join('')}</ol>`;
+    } else if (d.kind === 'sessans') {
+      const m = DATA.seniorIde.moments[d.moment];
+      const ans = DATA.interview.find(q => q.moment === d.moment)?.given || DATA.seniorIde.probe.answer;
+      left = `<div class="slabel">The moment in your session</div>
+        <div class="moment-card">${icon('star')}<div><b>${m.time} · ${m.label}</b><code>restart VENDSYNC --from=STEP03</code><span>${m.reason}</span></div></div>
+        <div class="slabel">Your answer to Techne ${App.synth()}</div>
+        <blockquote class="quote">“${ans}”</blockquote>
+        <div class="cap">${icon('info')}Techne asked as a new grad, because 9 new grads asked about rerunning a failed job this month.</div>`;
     } else if (d.kind === 'sent') {
       left = `<div class="slabel">What ${d.askedBy.split(' ')[0]} was doing</div>${shot(d.shot)}
         ${d.inferred ? `<div class="infer-box">${icon('alert')}<div><b>Your twin inferred this</b><span>${d.inferred}</span></div></div>` : `<div class="cap">${icon('send')}Senior Techne sent this to you because your twin drafted the answer.</div>`}`;
@@ -412,7 +422,7 @@ const Senior = (() => {
         const it = type === 'draft' ? drafts.find(x => x.id === id) : queue.find(x => x.id === id);
         const title = document.querySelector('.doc-h')?.textContent.trim() || it.title;
         finish(type, id, 'approved', type === 'draft' ? 'Approved and published. Your twin learned it.' : `Approved and published, credited to ${it.who.split(' ')[0]}.`, 15,
-          { title, topic: it.topic, from: type === 'draft' ? (it.kind === 'interview' ? 'interview' : it.kind === 'session' ? 'session' : 'answer') : 'published', author: type === 'queue' ? it.who : undefined, summary: it.steps[0][1].replace(/<[^>]+>/g, '') });
+          { title, topic: it.topic, from: type === 'draft' ? (it.kind === 'interview' ? 'interview' : it.kind === 'session' || it.kind === 'sessans' ? 'session' : 'answer') : 'published', author: type === 'queue' ? it.who : undefined, summary: it.steps[0][1].replace(/<[^>]+>/g, '') });
         break;
       }
       case 'sendback': sendBackForm(); break;
@@ -483,6 +493,13 @@ const Senior = (() => {
   function start(st) { reset(); show(st.screen); }
   function stop() { timers.forEach(clearTimeout); timers = []; closeSheet(); SeniorPages.stop(); }
   function flag(id) { flagged = id; }
+  // Called when Priya answers the question card: the restart draft is freshly drafted from it
+  let restartFresh = false;
+  function freshRestart() {
+    restartFresh = true;
+    const d = drafts.find(x => x.id === 'd-restart');
+    if (d && d.status === 'todo') { d.fresh = true; d.ago = 'just now'; }
+  }
   // Called when Priya finishes the end-of-day interview with Techne
   function addInterviewDraft() {
     interviewDone = true;
@@ -490,5 +507,5 @@ const Senior = (() => {
     updateCounts();
   }
 
-  return { init, start, restart: start, stop, show, flag, addInterviewDraft };
+  return { init, start, restart: start, stop, show, flag, addInterviewDraft, freshRestart };
 })();

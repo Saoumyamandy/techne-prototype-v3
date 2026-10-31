@@ -35,7 +35,7 @@ const Mobile = (() => {
         <div class="m-scroll">
           <span class="topic">${d.topic}</span>
           <h3>${d.title}</h3>
-          <p class="m-sub">${d.kind === 'session' ? 'From your session' : `Sent to you · ${d.askedBy} asked`} · ${d.ago}</p>
+          <p class="m-sub">${d.kind === 'sent' ? `Sent to you · ${d.askedBy} asked` : d.kind === 'sessans' ? 'From your session + your answer' : 'From your session'} · ${d.ago}</p>
           ${d.inferred ? `<div class="infer-box">${icon('alert')}<div><b>Your twin inferred this</b><span>${d.inferred}</span></div></div>` : ''}
           <ol class="steps">${d.steps.map(([t, b], i) => `<li><span class="sn">${i + 1}</span><div><b>${t}</b><p>${b}</p></div></li>`).join('')}</ol>
         </div>
@@ -49,8 +49,8 @@ const Mobile = (() => {
       <div class="m-title"><h2>Your twin’s drafts</h2><span class="m-count ${todo.length ? 'hot' : ''}">${todo.length} to do</span></div>
       <p class="m-sub">Techne drafted these from your work. Approving teaches your twin and publishes to the team.</p>
       <div class="m-scroll m-list">${todo.length ? todo.map(d => `<button class="m-card pending" data-mact="open" data-id="${d.id}">
-        <span class="kicon k-${d.kind}">${icon(d.kind === 'session' ? 'video' : 'send')}</span>
-        <div><b>${d.title}</b><span>${d.kind === 'session' ? 'From your session' : `${d.askedBy} asked`} · ${d.ago}</span></div><span class="m-review">Review</span></button>`).join('')
+        <span class="kicon k-${d.kind === 'sent' ? 'sent' : 'session'}">${icon(d.kind === 'sent' ? 'send' : 'video')}</span>
+        <div><b>${d.title}</b><span>${d.kind === 'sent' ? `${d.askedBy} asked` : d.kind === 'sessans' ? 'From your session + your answer' : 'From your session'} · ${d.ago}</span></div><span class="m-review">Review</span></button>`).join('')
         : `<div class="empty-row">${icon('check')}All caught up</div>`}
         ${drafts.filter(d => d.status === 'done').map(d => `<div class="m-card done"><span class="kicon">${icon('check')}</span><div><b>${d.title}</b><span>Approved · published</span></div></div>`).join('')}
       </div>

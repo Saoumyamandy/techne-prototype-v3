@@ -202,7 +202,7 @@ const SeniorPages = (() => {
         finishTyping($('#probe-a'));
         if (!$('#probe-a').value.trim()) { $('#probe-a').focus(); return; }
         DATA.interview.find(q => q.moment === DATA.seniorIde.probe.moment).given = $('#probe-a').value.trim();
-        probeState = 'answered'; Senior.addInterviewDraft(); rerender('ide'); break;
+        probeState = 'answered'; Senior.freshRestart(); rerender('ide'); break;
       case 'probe-later': probeState = 'later'; App.toast(`${icon('clock')}Saved for tonight’s interview.`); rerender('ide'); break;
       case 'probe-close': probeState = 'later'; rerender('ide'); break;
       case 'to-drafts': App.set({ screen: 'home' }); break;
