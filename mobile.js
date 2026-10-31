@@ -66,7 +66,7 @@ const Mobile = (() => {
       <div class="m-q">${P.q}<span class="chip">${icon('terminal')}${P.at}</span></div>
       <div class="m-label">Quick replies</div>
       <div class="m-replies">
-        <button data-mact="reply">${P.sample}</button>
+        <button data-mact="reply">${P.answer}</button>
         <button data-mact="reply">Steps 1–2 commit to VENDMAST. Never rerun them.</button>
         <button data-mact="reply">It depends. Let’s talk about it tonight.</button>
       </div>

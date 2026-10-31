@@ -9,6 +9,20 @@ const SeniorPages = (() => {
 
   const builtFrom = () => `<details class="built"><summary>${icon('info')}Built from</summary><ul>${DATA.persona.builtFrom.map(b => `<li>${b}</li>`).join('')}</ul><p>${DATA.persona.note}</p></details>`;
 
+  // Why Techne is asking: the real demand (anonymised) and the moment behind a persona question
+  function whyHTML(key) {
+    const L = DATA.lineage[key], m = DATA.seniorIde.moments[L.moment];
+    return `<details class="why"><summary>${icon('info')}Why Techne is asking</summary>
+      <div class="why-body">
+        <div class="why-cl"><b>${L.cluster}</b><span>${L.count}</span></div>
+        <div class="why-l">Real new grad questions, anonymised</div>
+        <ul class="why-q">${L.questions.map(q => `<li>“${q}”</li>`).join('')}</ul>
+        <div class="why-l">The moment it matches</div>
+        <div class="why-m">${icon('star')}<span><b>${m.time} · ${m.label}</b>${m.reason}</span></div>
+      </div></details>`;
+  }
+  const rateHTML = () => `<div class="rate"><span>Is this a good question?</span><button data-sact="rate-up">${icon('check')}Useful</button><button data-sact="rate-down">${icon('x')}Not relevant</button></div>`;
+
   // ── Senior IDE ──
   function hlJcl(l) {
     if (/^\/\/\*/.test(l)) return `<span class="c-cm">${l}</span>`;
@@ -69,11 +83,15 @@ const SeniorPages = (() => {
       <div class="pc-head"><b>Techne · asking as a new grad</b>${App.synth()}<button class="gx" data-sact="probe-later" title="Save for later">${icon('x')}</button></div>
       <p class="pc-q">${P.q}</p>
       <span class="chip">${icon('terminal')}${P.at}</span>
+      ${whyHTML(P.lineage)}
+      ${rateHTML()}
       <textarea id="probe-a" rows="2" placeholder="A sentence is enough"></textarea>
       <div class="pc-acts"><button class="chip add" data-sact="probe-sample">Use a sample answer</button><button class="btn ghost sm" data-sact="probe-later">Ask me tonight</button><button class="btn primary sm" data-sact="probe-answer">Answer</button></div>
-      ${builtFrom()}
     </div>`;
   }
+
+  // The 4:18 question may already be answered on the card; the interview doesn't ask it twice
+  function skipAnswered() { while (qIndex < DATA.interview.length && DATA.interview[qIndex].given) qIndex++; }
 
   // Small popover explaining why Techne flagged a moment, anchored to whatever was clicked
   function showMoment(i, anchor) {
@@ -100,8 +118,8 @@ const SeniorPages = (() => {
     const Q = DATA.interview;
     const done = qIndex >= Q.length;
     const msgs = Q.slice(0, Math.min(qIndex + 1, Q.length)).map((q, i) => `
-      <div class="msg ai"><div class="who">Techne ${App.synth()}</div><div class="abody"><p>${q.q}</p></div></div>
-      ${i < qIndex ? `<div class="msg me"><div class="bubble">${q.answer || q.sample}</div></div>` : ''}`).join('');
+      <div class="msg ai"><div class="who">Techne ${App.synth()}</div><div class="abody"><p>${q.q}</p>${i === qIndex ? whyHTML(q.lineage) + rateHTML() : ''}</div></div>
+      ${i < qIndex ? `<div class="msg me"><div class="bubble">${q.given}</div></div>` : ''}`).join('');
     return `<div class="modal-wrap iv-wrap"><div class="modal interview" role="dialog" aria-label="End-of-day interview">
       <div class="m-head"><div><span class="m-trig">${App.synth()}End-of-day interview · about 5 min</span><h2>Techne has ${Q.length} questions about today</h2></div><button class="gx" data-sact="iv-close" title="Finish later">${icon('x')}</button></div>
       <div class="iv-prog">${Q.map((_, i) => `<i class="${i < qIndex ? 'done' : i === qIndex ? 'on' : ''}"></i>`).join('')}<span>${done ? 'Done' : `Question ${qIndex + 1} of ${Q.length}`}</span></div>
@@ -111,7 +129,6 @@ const SeniorPages = (() => {
       ${done ? `<div class="m-foot"><span class="mut">${icon('shield')}Your answers stay in your twin until you approve them.</span><button class="btn primary" data-sact="iv-review">Review the draft ${icon('arrow')}</button></div>`
         : `<div class="m-foot iv-input"><textarea id="iv-a" rows="2" placeholder="Answer in a sentence or two"></textarea>
           <div class="iv-row"><button class="chip add" data-sact="iv-sample">Use a sample answer</button><button class="chip" data-sact="iv-skip">Skip this one</button><button class="btn primary" data-sact="iv-send">${icon('send')}Send</button></div></div>`}
-      ${builtFrom()}
     </div></div>`;
   }
 
@@ -181,20 +198,24 @@ const SeniorPages = (() => {
         App.toast(recording ? `${icon('record')}Recording again.` : `${icon('pause')}Recording paused. Nothing is captured until you resume.`);
         rerender('ide');
         break;
-      case 'probe-sample': $('#probe-a').value = DATA.seniorIde.probe.sample; break;
+      case 'probe-sample': $('#probe-a').value = DATA.seniorIde.probe.answer; break;
       case 'probe-answer':
         if (!$('#probe-a').value.trim()) { $('#probe-a').focus(); return; }
+        DATA.interview.find(q => q.moment === DATA.seniorIde.probe.moment).given = $('#probe-a').value.trim();
         probeState = 'answered'; Senior.addInterviewDraft(); rerender('ide'); break;
       case 'probe-later': probeState = 'later'; App.toast(`${icon('clock')}Saved for tonight’s interview.`); rerender('ide'); break;
       case 'probe-close': probeState = 'later'; rerender('ide'); break;
       case 'to-drafts': App.set({ screen: 'home' }); break;
-      case 'interview': qIndex = Math.min(qIndex, DATA.interview.length); openInterview(); break;
-      case 'iv-sample': $('#iv-a').value = DATA.interview[qIndex].sample; break;
+      case 'interview': skipAnswered(); openInterview(); break;
+      case 'iv-sample': $('#iv-a').value = DATA.interview[qIndex].answer; break;
+      case 'rate-up': App.toast(`${icon('check')}Thanks. Techne will ask more questions like this.`); el.closest('.rate').classList.add('done'); break;
+      case 'rate-down': App.toast(`${icon('x')}Got it. Techne will ask fewer questions like this.`); el.closest('.rate').classList.add('done'); break;
       case 'iv-send': case 'iv-skip': {
         const a = $('#iv-a')?.value.trim();
         if (act === 'iv-send' && !a) { $('#iv-a').focus(); return; }
-        DATA.interview[qIndex].answer = act === 'iv-skip' ? '(Skipped. Techne will ask another day.)' : a;
+        DATA.interview[qIndex].given = act === 'iv-skip' ? '(Skipped. Techne will ask another day.)' : a;
         qIndex++;
+        skipAnswered();
         openInterview();
         break;
       }
@@ -209,6 +230,6 @@ const SeniorPages = (() => {
   });
 
   function stop() { timers.forEach(clearTimeout); timers = []; }
-  function reset() { stop(); recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.answer); }
+  function reset() { stop(); recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
   return { render, stop, reset };
 })();

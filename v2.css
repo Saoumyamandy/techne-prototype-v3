@@ -587,3 +587,29 @@
 .km-list button:hover,.km-list button.active{background:var(--guide-soft);color:var(--ink)}
 .km-list .tt{font-family:var(--mono);font-size:10.5px;color:var(--muted);flex:none;padding-top:1px}
 .probe-card{top:118px}
+
+/* why Techne is asking + question rating */
+.why{font-size:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.why summary{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;list-style:none;color:var(--guide);font-weight:500}
+.why summary::-webkit-details-marker{display:none}
+.why summary .ic{width:13px;height:13px}
+.why[open] summary{border-bottom:1px solid var(--line-2)}
+.why-body{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.why-cl{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:8px;background:var(--guide-soft)}
+.why-cl b{font-size:12.5px;font-weight:600;color:var(--ink)}
+.why-cl span{font-size:11.5px;color:var(--guide);font-weight:600;white-space:nowrap}
+.why-l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:4px}
+.why-q{list-style:none;display:flex;flex-direction:column;gap:3px}
+.why-q li{font-size:12px;color:var(--ink-2);line-height:1.4}
+.why-m{display:flex;gap:7px;font-size:12px;line-height:1.45;color:var(--ink-2)}
+.why-m .ic{width:13px;height:13px;color:#E8A317;fill:#E8A317;flex:none;margin-top:2px}
+.why-m b{display:block;color:var(--ink);font-weight:500}
+.rate{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.rate span{margin-right:auto}
+.rate button{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border-radius:6px;border:1px solid var(--line);font-size:11.5px;color:var(--ink-2)}
+.rate button .ic{width:11px;height:11px}
+.rate button:hover{border-color:var(--guide);color:var(--guide)}
+.rate.done button{opacity:.5;pointer-events:none}
+.msg.ai .abody .why{margin-top:10px}
+.msg.ai .abody .rate{margin-top:8px}
+.probe-card{max-height:calc(100% - 140px);overflow:auto}

@@ -389,8 +389,8 @@ const DATA = (() => {
   ];
   // Added to drafts when Priya finishes the end-of-day interview
   const interviewDraft = {
-    id: 'd-int1', kind: 'interview', title: 'Restarting VENDSYNC after a lock timeout', ago: 'just now', topic: 'Procurement',
-    steps: [['Restart from the failed step', 'Steps 1 and 2 already committed. Rerunning them inserts duplicate vendor rows.'], ['Check the count', 'More than 1% off yesterday’s count means a partial load. Hold the PO batch.'], ['Never skip the reorg alone', 'Only with Dev K.’s OK when the batch window is at risk. Prefer delaying POBATCH.']],
+    id: 'd-int1', kind: 'interview', title: 'Finding and checking a failed VENDSYNC run', ago: 'just now', topic: 'Procurement',
+    steps: [['Check which step failed first', 'The alert only says VENDSYNC failed. jobstat shows the step and the SQL code.'], ['Don’t stop at RC=0', 'Compare the record count with yesterday’s. More than 1% off means a partial load: hold the PO batch.']],
     from: ['Your interview with Techne · today', 'Your session · yesterday'],
   };
 
@@ -489,15 +489,31 @@ const DATA = (() => {
       { time: '4:31 PM', line: 5, pos: 59, label: 'Checked the record count', reason: 'You compared the count with yesterday’s before telling #proc-ops. New grads usually stop at RC=0.' },
     ],
     probe: {
+      moment: 1,
       q: 'You restarted VENDSYNC from step 3, not from the top. Why?',
       at: '4:18 PM · restart VENDSYNC --from=STEP03',
-      sample: 'Steps 1 and 2 already committed. Rerunning them inserts duplicate vendor rows.',
+      answer: 'Steps 1 and 2 already committed to VENDMAST. Rerunning them inserts duplicate vendor rows, so restart from the step that failed.',
+      lineage: 'rerun',
     },
   };
+  // Why Techne asks each question: the cluster of real new grad questions behind it (anonymised)
+  const lineage = {
+    rerun: { cluster: 'Rerunning a batch job after a failure', count: '9 questions this month', moment: 1,
+      questions: ['Can I just rerun the whole job after it fails?', 'VENDSYNC failed at step 3. Do I start it again from the beginning?', 'Is it safe to restart a batch job halfway through?'] },
+    findfail: { cluster: 'Finding why a batch job failed', count: '7 questions this month', moment: 0,
+      questions: ['Where do I see which step of a job failed?', 'The alert just says VENDSYNC failed. Where do I look?', 'How do I find the error code for a failed job?'] },
+    checkdone: { cluster: 'Checking a batch job finished correctly', count: '6 questions this month', moment: 2,
+      questions: ['RC=0 means it worked, right?', 'How do I know the vendor sync loaded everything?', 'What should the record count be after VENDSYNC?'] },
+  };
+  // End-of-day interview: one question per key moment, in the order they happened.
+  // answer is what the field types out when the presenter types anything.
   const interview = [
-    { q: 'At 4:18 you restarted VENDSYNC from step 3. Why not from the top?', sample: 'Steps 1 and 2 already committed. Rerunning them inserts duplicate vendor rows.' },
-    { q: 'You checked the record count before telling #proc-ops. What number would have worried you?', sample: 'More than 1% off yesterday’s count means a partial load. Then I’d hold the PO batch.' },
-    { q: 'New grads ask this a lot: is it ever OK to skip the VENDMAST reorg?', sample: 'Only if the batch window is at risk, and only with Dev’s OK. Delay POBATCH instead if you can.' },
+    { moment: 0, lineage: 'findfail', q: 'At 4:12 you went straight to jobstat. What does it tell you that the alert doesn’t?',
+      answer: 'The alert only says VENDSYNC failed. jobstat shows which step and the SQL code, and that decides where you restart.' },
+    { moment: 1, lineage: 'rerun', q: 'At 4:18 you restarted VENDSYNC from step 3. Why not from the top?',
+      answer: 'Steps 1 and 2 already committed to VENDMAST. Rerunning them inserts duplicate vendor rows, so restart from the step that failed.' },
+    { moment: 2, lineage: 'checkdone', q: 'At 4:31 you checked the record count before telling #proc-ops. What number would have worried you?',
+      answer: 'RC=0 only means the step ran. If the count is more than 1% off yesterday’s, it was a partial load, so hold the PO batch.' },
   ];
 
   const hotspots = [
@@ -558,5 +574,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, hotspots, interviewsPlanned, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy }, drafts, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, hotspots, interviewsPlanned, archive, graph, learning, report };
 })();

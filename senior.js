@@ -302,7 +302,7 @@ const Senior = (() => {
         ${d.inferred ? `<div class="infer-box">${icon('alert')}<div><b>Your twin inferred this</b><span>${d.inferred}</span></div></div>` : `<div class="cap">${icon('send')}Senior Techne sent this to you because your twin drafted the answer.</div>`}`;
     } else {
       left = `<div class="slabel">Your interview with Techne ${App.synth()}</div>
-        <ol class="qa">${DATA.interview.map(i => `<li><span class="q">${icon('sparkle')}${i.q}</span><span class="a">${i.sample}</span></li>`).join('')}</ol>
+        <ol class="qa">${DATA.interview.map(i => `<li><span class="q">${icon('sparkle')}${i.q}</span><span class="a">${i.given || i.answer}</span></li>`).join('')}</ol>
         <div class="cap">${icon('info')}${DATA.persona.note}</div>`;
     }
     const right = `${d.kind === 'sent' ? asker(d.askedBy, 'Asked Senior Techne · routed to your twin', d.ago) : ''}
