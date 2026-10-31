@@ -206,9 +206,12 @@ const App = (() => {
     Senior.init();
     Mobile.init();
     state.theme = hostTheme();
-    // Opening the start of a run-through clears anything sent to Priya in an earlier one, in every open tab
-    if (['filecopy', 'senior-ide'].includes(location.hash.slice(1))) { try { localStorage.removeItem('techne-sent-priya'); } catch { /* blocked */ } }
     readHash();
+    // Loading the senior IDE (start of the story) or the file-copy task (before Maya sends anything) clears a send
+    // left over from an earlier run-through, in every open tab. Works for short links and reloads alike.
+    if ((state.role === 'senior' && state.screen === 'ide') || (state.role === 'grad' && state.sc === 'filecopy')) {
+      try { localStorage.removeItem('techne-sent-priya'); } catch { /* blocked */ }
+    }
     writeHash();
     apply();
     // follow the viewer's own theme switch

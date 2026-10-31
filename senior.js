@@ -496,7 +496,7 @@ const Senior = (() => {
   function flag(id) { flagged = id; }
   // Maya's inferred step, sent from the new grad side (maybe from another tab)
   function sentRecently() {
-    try { const t = +localStorage.getItem('techne-sent-priya'); return t && Date.now() - t < 6 * 3600e3; } catch { return false; }
+    try { const t = +localStorage.getItem('techne-sent-priya'); return t && Date.now() - t < 2 * 3600e3; } catch { return false; }
   }
   function receiveSent() {
     if (!drafts || drafts.some(d => d.id === DATA.sentDraft.id)) return;
