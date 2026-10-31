@@ -645,3 +645,50 @@
 .sent-to span{flex:1;min-width:0}
 .sent-to .btn{margin-left:auto}
 .sent-to.done{background:var(--green-soft);color:var(--green-ink)}
+
+/* How Techne's questions are built */
+.persona{max-width:1080px;display:flex;flex-direction:column;gap:30px}
+.ps-sec{display:flex;flex-direction:column;gap:12px}
+.ps-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ps-h h2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.ps-h > span:not(.synth){font-size:12.5px;color:var(--muted)}
+.ps-clusters{padding:0}
+.ps-cl{display:flex;align-items:center;gap:16px;padding:14px 18px;border-top:1px solid var(--line-2)}
+.ps-cl:first-child{border-top:0}
+.ps-cl.flash{animation:clflash 2.4s ease-out}
+@keyframes clflash{0%,40%{background:var(--guide-soft)}100%{background:transparent}}
+.ps-cl-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.ps-cl-main b{font-size:13.5px;font-weight:500}
+.ps-cl-main span{font-size:12.5px;color:var(--muted)}
+.ps-n{font-size:12px;color:var(--muted);white-space:nowrap}
+.ps-n b{font-size:18px;font-weight:600;color:var(--ink);margin-right:4px;font-variant-numeric:tabular-nums}
+.ps-other{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ps-other .card{display:flex;flex-direction:column;gap:2px}
+.ps-other b{font-size:20px;font-weight:600;letter-spacing:-.02em}
+.ps-other span{font-size:13px}
+.ps-other small{font-size:12px;color:var(--muted)}
+.ps-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ps-col-h{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--green-ink);margin-bottom:10px}
+.ps-col-h .ic{width:14px;height:14px}
+.gaps-card .ps-col-h{color:var(--amber)}
+.ps-cols ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.ps-cols li{font-size:13px;padding:5px 10px;border-radius:8px;background:var(--chip)}
+.gaps-card li{background:var(--amber-soft);color:var(--ink)}
+.ps-cap{font-size:13px;color:var(--ink-2);display:flex;gap:6px}
+.ps-never{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ps-never div{display:flex;align-items:center;gap:8px;font-size:13px}
+.ps-never .ic{width:16px;height:16px;color:var(--red);flex:none}
+.ps-quality{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.ps-stat{display:flex;flex-direction:column;gap:6px}
+.ps-stat b{font-size:32px;font-weight:600;letter-spacing:-.03em;color:var(--guide);font-variant-numeric:tabular-nums}
+.ps-stat span{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.ps-ver{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--ink)!important}
+.ps-ver .ic{width:14px;height:14px}
+.synth{cursor:pointer}
+.synth:hover{border-color:var(--guide);color:var(--guide)}
+.cl-link{margin-top:0;text-align:left;color:var(--guide)!important}
+.iv-link{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:6px;margin:-6px;border-radius:8px}
+.iv-link:hover{background:var(--hover)}
+.iv-link > div{flex:1}
+.iv-link > .ic{width:14px;height:14px;color:var(--muted)}
+@media (max-width:1180px){.ps-never,.ps-quality{grid-template-columns:1fr 1fr}}

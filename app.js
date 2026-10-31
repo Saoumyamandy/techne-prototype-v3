@@ -93,7 +93,7 @@ const App = (() => {
   // ── state, kept in the hash so a reload or shared link lands on the same view ──
   const SCREENS = {
     grad: [['ide', 'IDE'], ['save', 'Describe-task save'], ['archive', 'Your twin (archive)'], ['learn', 'Learning path'], ['onboard', 'Onboarding + permissions'], ['report', 'Year-end report']],
-    senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['report', 'Year-end report']],
+    senior: [['home', 'Your Home'], ['queue', 'Question Queue'], ['repo', 'Company repository'], ['ide', 'Your IDE'], ['hot', 'Hot spots'], ['persona', 'How Techne’s questions are built'], ['report', 'Year-end report']],
     mobile: [['approvals', 'Senior · your twin’s drafts'], ['probes', 'Senior · Techne’s questions'], ['slack', 'New grad · Slack'], ['archive', 'New grad · your twin']],
   };
   const state = { role: 'grad', screen: 'ide', wt: 'split', help: 'terminal', sc: 'checked', seen: '0', theme: 'light' };
@@ -109,7 +109,8 @@ const App = (() => {
     archive: { role: 'grad', screen: 'archive' }, learning: { role: 'grad', screen: 'learn' },
     onboarding: { role: 'grad', screen: 'onboard' }, save: { role: 'grad', screen: 'save' },
     filecopy: { role: 'grad', screen: 'ide', sc: 'filecopy' }, restart: { role: 'grad', screen: 'ide', sc: 'restart' },
-    seen: { role: 'grad', screen: 'ide', sc: 'checked', seen: '1' }, mobile: { role: 'mobile', screen: 'approvals' },
+    seen: { role: 'grad', screen: 'ide', sc: 'checked', seen: '1' },
+    persona: { role: 'senior', screen: 'persona' }, mobile: { role: 'mobile', screen: 'approvals' },
   };
   function hostTheme() {
     const t = document.documentElement.dataset.theme;
@@ -215,11 +216,16 @@ const App = (() => {
       modules[state.role].relayout?.();
     });
     addEventListener('resize', () => modules[state.role].relayout?.());
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.synth')) return;
+      e.preventDefault(); e.stopPropagation();
+      set({ role: 'senior', screen: 'persona' });
+    }, true);
   }
 
   // Small shared pieces used by several screens
   const twinName = id => id ? DATA.twins[id].name : null;
-  const synth = () => `<span class="synth" data-tip="${DATA.persona.note}">${icon('sparkle')}Synthetic</span>`;
+  const synth = () => `<span class="synth" role="link" tabindex="0" data-tip="Asks as a synthetic new grad. Click to see how it’s built.">${icon('sparkle')}Synthetic</span>`;
   const STATUS = {
     verified: ['Verified', 'shield', 'st-ok'],
     inferred: ['Inferred', 'alert', 'st-warn'],

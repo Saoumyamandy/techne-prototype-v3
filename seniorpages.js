@@ -156,20 +156,63 @@ const SeniorPages = (() => {
             <td><div class="segrow"><span class="segs">${segs(h)}</span><span class="segs-n">${h.n}</span></div></td>
             <td class="trend ${h.trend > 0 ? 'up' : h.trend < 0 ? 'down' : ''}">${h.trend === null ? 'New' : h.trend === 0 ? 'Flat' : `${h.trend > 0 ? '↑' : '↓'} ${Math.abs(h.trend)}%`}</td>
             <td><span class="stag ${cls} mini">${icon(ic)}${lab}${h.twin ? ` · ${App.twinName(h.twin)}` : ''}</span></td>
-            <td class="mut">${h.next || '—'}</td></tr>`; }).join('')}</tbody></table>
+            <td class="mut">${h.cluster ? `<button class="link sm cl-link" data-sact="cluster" data-cl="${h.cluster}">${h.next} ${icon('arrow')}</button>` : h.next || '—'}</td></tr>`; }).join('')}</tbody></table>
         </div>
         <div class="card nova-card">
           <div class="chead"><span class="ctitle">Upcoming interviews</span>${App.synth()}</div>
           <p class="csub">Techne interviews seniors about gaps, 5 minutes at the end of their day.</p>
-          <ul class="ivs">${DATA.interviewsPlanned.map(([who, topic, when]) => `<li><span class="avatar sm light">${who[0]}</span><div><b>${topic}</b><span>with ${who} · ${when}</span></div></li>`).join('')}</ul>
-          ${builtFrom()}
+          <ul class="ivs">${DATA.interviewsPlanned.map(([who, topic, when, cl]) => `<li><button class="iv-link" data-sact="cluster" data-cl="${cl}"><span class="avatar sm light">${who[0]}</span><div><b>${topic}</b><span>with ${who} · ${when}</span></div>${icon('chev-right')}</button></li>`).join('')}</ul>
+          <button class="link sm" data-sact="cluster" data-cl="">${icon('info')}How Techne’s questions are built</button>
         </div>
       </div>
     </div>`;
   }
 
+  // ── How Techne's questions are built ──
+  let focusCluster = null;
+  function personaHTML() {
+    const P = DATA.personaPage;
+    return `<div class="page persona">
+      <div class="hello"><h1>How Techne’s questions are built</h1>
+        <p>When Techne interviews seniors, it asks as a synthetic new grad: the questions real new grads ask, so seniors’ twins learn the why.</p></div>
+      <section class="ps-sec">
+        <div class="ps-h"><h2>Built from</h2><span>Real questions, anonymised. Refreshed weekly.</span></div>
+        <div class="card ps-clusters">${P.clusters.map(c => `<div class="ps-cl ${focusCluster === c.id ? 'flash' : ''}" id="cl-${c.id}">
+            <div class="ps-cl-main"><b>${c.name}</b><span>“${c.ex}”</span></div>
+            <span class="ps-n"><b>${c.n}</b> questions this month</span></div>`).join('')}</div>
+        <div class="ps-other">${P.other.map(([n, l, sub]) => `<div class="card"><b>${n}</b><span>${l}</span><small>${sub}</small></div>`).join('')}</div>
+      </section>
+      <section class="ps-sec">
+        <div class="ps-h"><h2>The new grad Techne asks as</h2>${App.synth()}</div>
+        <div class="ps-cols">
+          <div class="card"><div class="ps-col-h">${icon('check')}Knows</div><ul>${P.knows.map(k => `<li>${k}</li>`).join('')}</ul></div>
+          <div class="card gaps-card"><div class="ps-col-h">${icon('alert')}Doesn’t know yet</div><ul>${P.doesnt.map(k => `<li>${k}</li>`).join('')}</ul></div>
+        </div>
+        <p class="ps-cap">The gaps are on purpose. They make Techne ask what a new grad would.</p>
+      </section>
+      <section class="ps-sec">
+        <div class="ps-h"><h2>Never used</h2></div>
+        <div class="card ps-never">${P.never.map(([ic, t]) => `<div>${icon(ic)}<span>${t}</span></div>`).join('')}</div>
+      </section>
+      <section class="ps-sec">
+        <div class="ps-h"><h2>How we know it’s any good</h2></div>
+        <div class="ps-quality">
+          <div class="card ps-stat"><b>${P.quality.match}</b><span>${P.quality.matchText}</span></div>
+          <div class="card ps-stat"><b>${P.quality.useful}</b><span>Seniors rated Techne’s questions Useful</span></div>
+          <div class="card ps-stat small"><span class="ps-ver">${icon('replay')}${P.quality.version}</span><span>Every Useful or Not relevant a senior taps tunes the next version.</span></div>
+        </div>
+      </section>
+    </div>`;
+  }
+
   function render(scr, el) {
     host = el;
+    if (scr === 'persona') {
+      el.innerHTML = personaHTML();
+      if (focusCluster) { const t = el.querySelector(`#cl-${focusCluster}`); t?.scrollIntoView({ block: 'center' }); focusCluster = null; }
+      else el.scrollTop = 0;
+      return;
+    }
     if (scr === 'ide') {
       if (probeState === 'hidden') later(() => { probeState = 'asking'; if (host.querySelector('.sp-ide')) rerender('ide'); }, 1400);
       el.innerHTML = ideHTML();
@@ -191,6 +234,7 @@ const SeniorPages = (() => {
   function onAct(act, el) {
     switch (act) {
       case 'moment': showMoment(+el.dataset.i, el); break;
+      case 'cluster': focusCluster = el.dataset.cl || null; App.set({ role: 'senior', screen: 'persona' }); break;
       case 'moment-close': host.querySelector('.mpop')?.remove(); host.querySelectorAll('[data-sact="moment"].active').forEach(b => b.classList.remove('active')); break;
       case 'moments-list': momentsOpen = !momentsOpen; rerender('ide'); break;
       case 'pause':
@@ -265,6 +309,6 @@ const SeniorPages = (() => {
   });
 
   function stop() { timers.forEach(clearTimeout); timers = []; }
-  function reset() { stop(); clearTimeout(typing); typing = null; recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
+  function reset() { focusCluster = null; stop(); clearTimeout(typing); typing = null; recording = true; probeState = 'hidden'; qIndex = 0; momentsOpen = false; DATA.interview.forEach(q => delete q.given); }
   return { render, stop, reset };
 })();

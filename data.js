@@ -585,17 +585,31 @@ const DATA = (() => {
 
   const hotspots = [
     { topic: 'Copybooks and COBCPY', n: 18, trend: -30, cover: 'covered', twin: 'priya', next: null },
-    { topic: 'Blank or bad numeric data (S0C7)', n: 14, trend: 55, cover: 'partial', twin: 'dev', next: 'Techne interviews Dev K. · Thu' },
+    { topic: 'Blank or bad numeric data (S0C7)', n: 14, trend: 55, cover: 'partial', twin: 'dev', next: 'Techne interviews Dev K. · Thu', cluster: 'findfail' },
     { topic: 'VSAM files for reporting', n: 11, trend: 0, cover: 'covered', twin: 'priya', next: null },
-    { topic: 'Rerunning PROCINV', n: 9, trend: null, cover: 'gap', twin: null, next: 'Techne interviews Priya R. · Fri' },
+    { topic: 'Rerunning PROCINV', n: 9, trend: null, cover: 'gap', twin: null, next: 'Techne interviews Priya R. · Fri', cluster: 'rerun' },
     { topic: 'PDF invoices in the file copy', n: 6, trend: null, cover: 'inferred', twin: 'priya', next: 'Waiting on Priya R. to confirm' },
     { topic: 'TAXTBL ownership', n: 5, trend: 25, cover: 'gap', twin: null, next: 'Open in Question Queue' },
   ];
   const interviewsPlanned = [
-    ['Dev K.', 'Blank or bad numeric data in batch input', 'Thu · 5 min'],
-    ['Priya R.', 'Rerunning PROCINV safely', 'Fri · 5 min'],
-    ['Lena M.', 'PO aging buckets (doc is 4 months old)', 'Mon · 5 min'],
+    ['Dev K.', 'Blank or bad numeric data in batch input', 'Thu · 5 min', 'findfail'],
+    ['Priya R.', 'Rerunning PROCINV safely', 'Fri · 5 min', 'rerun'],
+    ['Lena M.', 'Checking the PO aging batch finished correctly', 'Mon · 5 min', 'checkdone'],
   ];
+  // How the new grad persona Techne asks as is built, for "How Techne's questions are built"
+  const personaPage = {
+    clusters: [
+      { id: 'rerun', name: 'Rerunning a batch job after a failure', n: 9, ex: 'Can I just rerun the whole job after it fails?' },
+      { id: 'findfail', name: 'Finding why a batch job failed', n: 7, ex: 'The alert just says VENDSYNC failed. Where do I look?' },
+      { id: 'checkdone', name: 'Checking a batch job finished correctly', n: 6, ex: 'RC=0 means it worked, right?' },
+      { id: 'copybooks', name: 'Copybooks and local builds', n: 18, ex: 'Why can’t the compiler find my copybook?' },
+    ],
+    other: [['38', 'onboarding tickets', 'What new grads got stuck on in weeks 1 to 6'], ['1,240', '#proc-help messages', 'Last 12 months, names removed']],
+    knows: ['CS degree', 'Python and Java', 'Git', 'Week 2 on the team'],
+    doesnt: ['COBOL', 'JCL restarts', 'Copybooks', 'Procurement business rules'],
+    never: [['user', 'Names of who asked'], ['lock', 'Anyone’s private twin'], ['edit', 'Private notes'], ['video', 'New grads’ recordings']],
+    quality: { match: '8 in 10', matchText: 'of Techne’s questions matched questions real new grads asked later', useful: '74%', version: 'Version 3 · updated weekly from new questions' },
+  };
 
   // ── New grad: Your Techne archive, learning path, report ──
   const archive = [
@@ -641,5 +655,5 @@ const DATA = (() => {
     },
   };
 
-  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, sentDraft, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, archive, graph, learning, report };
+  return { twins, persona, tree, fid, scenarios: { checked, unchecked, filecopy, restart }, drafts, sentDraft, interviewDraft, queue, docs, twinKnows, seniorIde, interview, lineage, restartSteps, hotspots, interviewsPlanned, personaPage, archive, graph, learning, report };
 })();
